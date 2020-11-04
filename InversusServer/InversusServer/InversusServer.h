@@ -18,6 +18,7 @@
 
 typedef struct player {
 	int nu;
+	BOOL enable = false;
 	double rx[7], ry[7];
 	double cx, cy;
 	double bullet[6][4] = { 0 };

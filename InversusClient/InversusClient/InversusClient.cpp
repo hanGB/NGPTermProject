@@ -6,7 +6,7 @@
 
 #define SERVERIP "127.0.0.1"
 #define SERVERPORT 9000
-#define BUFSIZE 512
+#define BUFSIZE 3000
 #define MAX_CLNT 256
 
 
@@ -28,13 +28,14 @@ typedef struct Clinfo {
 
 typedef struct CData {//클라이언트로부터 받은 데이터
 	int ci;
-	int dx=0, dy=0; //방향
+	int dx = 0, dy = 0; //방향
 }CData;
+
 
 CData clnt_data;
 Clinfo clnt_info;
 
-int clientcount = 2;
+int clientcount = 5;
 
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
@@ -108,12 +109,8 @@ DWORD WINAPI ClientMain(LPVOID arg)
 
 DWORD WINAPI SendMsg(LPVOID arg) {//전송용 쓰레드함수
 	while (1) {//반복
-		
-		/*
-		send(sock, (char*)&len, sizeof(int), 0);
-		send(sock, (const char*)&clnt_data, sizeof(CData), 0);
-		*/
-		Sleep(300);
+
+		Sleep(10);
 		send(sock, (char*)&clnt_data, sizeof(CData), 0);
 	}
 	return 0;
@@ -122,19 +119,13 @@ DWORD WINAPI SendMsg(LPVOID arg) {//전송용 쓰레드함수
 DWORD WINAPI RecvMsg(LPVOID arg) {
 	int len;
 	while (1) {//반복
-		/*
-		recvn(sock, (char*)&len, sizeof(int), 0);
 
+		Sleep(10);
 		int GetSize;
 		char suBuffer[BUFSIZE];
-		GetSize = recv(sock, suBuffer, len, 0);
-		*/
-		Sleep(300);
-		int GetSize;
-		char suBuffer[BUFSIZE];
-		GetSize = recv(sock, suBuffer, sizeof(suBuffer)-1, 0);
+		GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
 		suBuffer[GetSize] = '\0';
-		player temp = *(player *)suBuffer;
+		player temp = *(player*)suBuffer;
 		parray[temp.nu] = temp;
 
 
@@ -146,7 +137,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 {
 	PAINTSTRUCT ps;
 	static HDC hDC, hMemDC;
-	HBRUSH hBrush, oldBrush, eBrush, ehBrush, unBrush;
+	HBRUSH hBrush, oldBrush, eBrush, eBrush2, ehBrush, unBrush;
 	HBRUSH hBrush2, hBrush3, oldBrush2;
 	HPEN MyPen, ePen, OldPen, cPen, unPen, iPen;
 	HFONT Font, OldFont;
@@ -217,6 +208,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		hBrush2 = CreateSolidBrush(RGB(0, 0, 0));//검정
 		hBrush3 = CreateSolidBrush(RGB(125, 125, 125));//검정
 		eBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+		eBrush2 = CreateSolidBrush(RGB(200, 10, 10));
 		ehBrush = CreateHatchBrush(HS_BDIAGONAL, RGB(ecolor[0], ecolor[1], ecolor[2]));//적 빗금
 
 		hMemDC = img.GetDC();
@@ -236,10 +228,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
 				if (death == false)
 				{
-					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-					Rectangle(hMemDC, parray[0].cx - sx / 2, parray[0].cy - sy / 2, parray[0].cx + sx / 2, parray[0].cy + sy / 2);
-					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-					Rectangle(hMemDC, parray[1].cx - sx / 2, parray[1].cy - sy / 2, parray[1].cx + sx / 2, parray[1].cy + sy / 2);
+					for (int i = 0; i < clientcount; i++)
+					{
+						if (parray[i].enable == true)
+						{
+							oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush3);
+							if (i == clnt_info.ci)
+								oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush2);
+							Rectangle(hMemDC, parray[i].cx - sx / 2, parray[i].cy - sy / 2, parray[i].cx + sx / 2, parray[i].cy + sy / 2);
+						}
+					}
 				}
 				OldPen = (HPEN)SelectObject(hMemDC, cPen);
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
@@ -252,7 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						//총알 도는거
 						if (parray[j].bullet[i][0] == 1 || parray[j].bullet[i][0] == 2)
 						{
-							if (death == false)
+							if (death == false && parray[j].enable == true)
 							{
 								if (parray[j].bullet[i][0] == 1)
 									oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
@@ -291,6 +289,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			SelectObject(hMemDC, oldBrush);
 			DeleteObject(hBrush);
 			DeleteObject(eBrush);
+			DeleteObject(eBrush2);
 			DeleteObject(MyPen);
 			DeleteObject(cPen);
 			DeleteObject(ePen);
@@ -316,10 +315,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			{
 				seta = 0;
 			}
-			
+
 			{
-				//ReloadBullet(&reload, parray[0].bullet, 20);
-				//ReloadBullet(&reload, parray[1].bullet, 20);
 				MoveBullet(rectView, parray[0].bullet, 50, &combo, multi, parray[0].regg, parray[1].regg);
 				MoveBullet(rectView, parray[1].bullet, 50, &combo, multi, parray[1].regg, parray[0].regg);
 				Tdetaheffect(effect);
@@ -373,48 +370,48 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 
 	case WM_KEYDOWN:
 		//MessageBox(NULL, "test", "test", MB_OK);
-		
+
+	{
+		if (wParam == VK_NUMPAD5)
 		{
-			if (wParam == VK_NUMPAD5)
-			{
-				Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 2);
-			}
-			else if (wParam == VK_NUMPAD2)
-			{
-				Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 3);
-			}
-			else if (wParam == VK_NUMPAD1)
-			{
-				Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 1);
-			}
-			else if (wParam == VK_NUMPAD3)
-			{
-				Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 0);
-			}
+			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 2);
+		}
+		else if (wParam == VK_NUMPAD2)
+		{
+			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 3);
+		}
+		else if (wParam == VK_NUMPAD1)
+		{
+			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 1);
+		}
+		else if (wParam == VK_NUMPAD3)
+		{
+			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 0);
+		}
 
-			if (death == true)
+		if (death == true)
+		{
+			if (wParam == VK_RETURN)
 			{
-				if (wParam == VK_RETURN)
+				SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
+					, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
+					, &ten, &gametime, level, sgun, &scount, multi);
+				for (int i = 0; i < 2; i++)
 				{
-					SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-						, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-						, &ten, &gametime, level, sgun, &scount, multi);
-					for (int i = 0; i < 2; i++)
-					{
-						for (int k = 0; k < 6; k++)
-							parray[i].bullet[k][0] = 0;
-					}
-
-					parray[0].cx = sx * 2;
-					parray[0].cy = sy * 4;
-
-					parray[1].cx = rectView.right - sx * 2;
-					parray[1].cy = rectView.bottom - sy * 2;
+					for (int k = 0; k < 6; k++)
+						parray[i].bullet[k][0] = 0;
 				}
+
+				parray[0].cx = sx * 2;
+				parray[0].cy = sy * 4;
+
+				parray[1].cx = rectView.right - sx * 2;
+				parray[1].cy = rectView.bottom - sy * 2;
 			}
 		}
-		InvalidateRect(hWnd, NULL, FALSE);
-		break;
+	}
+	InvalidateRect(hWnd, NULL, FALSE);
+	break;
 	case WM_KEYUP:
 
 		InvalidateRect(hWnd, NULL, FALSE);

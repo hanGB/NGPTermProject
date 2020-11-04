@@ -9,10 +9,10 @@
 
 
 #define SERVERPORT 9000
-#define BUFSIZE 512
+#define BUFSIZE 3000
 #define MAX_CLNT 256
 
-#define PLAYER_SPEED 10
+#define PLAYER_SPEED 1
 
 HINSTANCE g_hinst;
 LPCTSTR lpszClass = "Window Class Name";
@@ -115,16 +115,18 @@ DWORD WINAPI ServerMain(LPVOID arg)
 		{
 			parray[clientCount].cx = 400;
 			parray[clientCount].cy = 300;
+			parray[clientCount].enable = true;
 		}
 		else
 		{
-			parray[clientCount].cx = 800;
-			parray[clientCount].cy = 300;
+			parray[clientCount].cx = rand() % 1000;
+			parray[clientCount].cy = rand() % 700;
+			parray[clientCount].enable = true;
 		}
 		clnt_info[clientCount].ci = clientCount;
 		clientSocks[clientCount++] = client_sock;//클라이언트 소켓배열에 방금 가져온 소켓 주소를 전달
-		
-		send(client_sock, (char*)&clnt_info[clientCount-1], sizeof(Clinfo), 0);
+
+		send(client_sock, (char*)&clnt_info[clientCount - 1], sizeof(Clinfo), 0);
 
 		ReleaseMutex(hMutex);//뮤텍스 중지
 
@@ -149,7 +151,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	SOCKET clientSock = (SOCKET)arg; //매개변수로받은 클라이언트 소켓을 전달
 	int len;
-	int ci=0;//클라 아이디
+	int ci = 0;//클라 아이디
 	for (int i = 0; i < clientCount; i++) {//배열의 갯수만큼
 		if (clientSock == clientSocks[i]) {
 			ci = i;
@@ -158,36 +160,29 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 	while (1)
 	{
-		
-		//recvn(clientSock, (char*)&len, sizeof(int), 0);
 		int GetSize;
 		char suBuffer[BUFSIZE];
 		int playerid;
-		Sleep(300);
-		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer)-1, 0);
+		Sleep(10);
+		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer) - 1, 0);
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
 		suBuffer[GetSize] = '\0';
 		CData* tmp = (CData*)suBuffer;
 		playerid = tmp->ci;
-		
+
 		clnt_data[playerid] = *tmp;
 
 		move_player_object(playerid);
 
 		player temp = parray[playerid];
 		temp.nu = playerid;
-		//WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
 		for (int i = 0; i < clientCount; i++)
 		{
 			send(clientSocks[i], (char*)&temp, sizeof(player), 0);
-			/*
-			send(clientSocks[i], (char*)&len, sizeof(int), 0);
 
-			send(clientSocks[i], (const char*)&temp, sizeof(player), 0);
-			*/
 		}
 		ReleaseMutex(hMutex);//뮤텍스 중지
-		Sleep(300);
+		Sleep(10);
 	}
 
 	//이 줄을 실행한다는 것은 해당 클라이언트가 나갔다는 사실임 따라서 해당 클라이언트를 배열에서 제거해줘야함
@@ -221,7 +216,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		return 0;
 	case WM_PAINT:
 	{
-	
+
 		break;
 	}
 	case WM_TIMER: // 시간이 경과하면 메시지 자동 생성
@@ -273,14 +268,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		break;
 
 	case WM_CHAR:
-		
+
 		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
 
 	case WM_KEYDOWN:
 		//MessageBox(NULL, "test", "test", MB_OK);
-		
-		
+
+
 		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 	case WM_KEYUP:
