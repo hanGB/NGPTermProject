@@ -1,0 +1,15 @@
+/InversusClient/.vs
+/InversusServer/.vs
+/InversusClient/InversusClient/x64
+/InversusServer/InversusServer/x64
+*.exe
+*.ilk
+*.pdb
+*.obj
+*.log
+*.pch
+*.idb
+*.tlog
+*.lastbuildstate
+*.suo
+*.db
