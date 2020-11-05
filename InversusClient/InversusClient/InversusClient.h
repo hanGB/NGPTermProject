@@ -44,57 +44,6 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 	return (len - left);
 }
 
-
-void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
-{
-	if (*reload < time)
-	{
-		(*reload)++;
-	}
-	else
-	{
-		for (int i = 0; i < 6; i++)
-		{
-			if (bullet[i][0] == 0)
-			{
-				bullet[i][0] = 1;
-				*reload = 0;
-				return;
-			}
-		}
-	}
-}
-
-void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하게
-{
-	RECT temp;
-	if (IntersectRect(&temp, &rec, &rec2))
-	{
-		if ((temp.bottom - temp.top) <= (temp.right - temp.left))
-		{
-			if (temp.top == rec2.top)
-			{
-				*cy -= temp.bottom - temp.top;
-			}
-			else if (temp.bottom == rec2.bottom)
-			{
-				*cy += temp.bottom - temp.top;
-			}
-		}
-		else
-		{
-			if (temp.left == rec2.left)
-			{
-				*cx -= temp.right - temp.left;
-			}
-			else if (temp.right == rec2.right)
-			{
-				*cx += temp.right - temp.left;
-			}
-		}
-	}
-}
-
 void MovePlayer(int *dx, int *dy)//주인공 이동
 {
 	
@@ -116,25 +65,6 @@ void MovePlayer(int *dx, int *dy)//주인공 이동
 	if (GetAsyncKeyState('d') & 0x8000 || GetAsyncKeyState('D') & 0x8000)
 	{
 		*dx = 1;
-	}
-}
-
-void MoveEnemy(double enemy[][5], int cx, int cy)
-{
-	for (int i = 0; i < LIMIT_ENEMY; i++)
-	{
-		if (enemy[i][0] == 1)
-		{
-			if (enemy[i][1] < cx)
-				enemy[i][1] += enemy[i][3];
-			else
-				enemy[i][1] -= enemy[i][3];
-
-			if (enemy[i][2] < cy)
-				enemy[i][2] += enemy[i][3];
-			else
-				enemy[i][2] -= enemy[i][3];
-		}
 	}
 }
 
@@ -378,79 +308,6 @@ void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//
 		GradientFill(pDC, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
 }
 
-void DeathEffect(double effect[][17], double x, double y, int dx, int i)//죽을때 이펙트
-{
-	//0-시간 1-x1 2-y1 3-x2 4-y2 5-x3 6-y3 7-x4 8-y4
-	//9- 1지름 10-2지름 11-3지름 12-4지름 13~16+/-
-	for (int j = 1; j < 8; j += 2)
-		effect[i][j] = x + rand() % 50 * cos(rand() % 3);
-	for (int j = 2; j < 9; j += 2)
-		effect[i][j] = y + rand() % 50 * sin(rand() % 3);
-	for (int j = 9; j < 13; j++)
-		effect[i][j] = rand() % (dx / 2) + 10;
-	for (int j = 13; j < 17; j++)
-		effect[i][j] = rand() % 2;
-	effect[i][0] = 5;
-}
-
-void RespawnEffect(double reffect[][4], double x, double y, int nu)//리스폰 할때 이펙트
-{
-	reffect[0][0] = 30;
-	reffect[0][1] = x;
-	reffect[0][2] = y;
-	reffect[0][3] = nu;
-}
-
-void DeathEnemy(double enemy[][5], double effect[][17], int block[][20], double dx, double dy, int k, RECT temp, RECT erec, int* score, int* combo, double sgun[][3], int* s)//적 죽음
-{
-	enemy[k][0] = 0;
-	POINT eec = { enemy[k][1] , enemy[k][2] };
-	for (int y = 0; y < 20; y++)
-	{
-		for (int x = 0; x < 20; x++)
-		{
-			RECT rec = { dx * x, dy * y, dx * (x + 1), dy * (y + 1) };
-			if (IntersectRect(&temp, &erec, &rec))
-			{
-				if (block[y][x] == 1)
-					block[y][x] = 0;
-
-				if (block[y][x] == 0)
-				{
-					if (PtInRect(&rec, eec))
-					{
-						int r = rand() % 4;
-						for (int a = 0; a < r; a++)
-						{
-							sgun[*s][0] = 1;
-							sgun[*s][1] = x * dx + dx / 2;
-							sgun[*s][2] = y * dy + dy / 2;
-							if (*s < LIMIT_SGUN - 1)
-								(*s)++;
-							else
-								(*s) = 0;
-						}
-					}
-				}
-			}
-		}
-	}
-	DeathEffect(effect, enemy[k][1], enemy[k][2], dx, k + 1);
-
-	/*
-	for (int t = 0; t < LIMIT_ENEMY; t++)
-	{
-	RECT rec = { enemy[t][1] - dx / 2,enemy[t][2] - dy / 2 ,enemy[t][1] + dx / 2,enemy[t][2] + dy / 2 };
-	if (IntersectRect(&temp, &erec, &rec))
-	{
-	DeathEnemy(enemy, effect, block, dx, dy, k, temp, erec,score,combo);
-	}
-	}
-	*/
-	(*score) += 10;
-	(*combo)++;
-}
-
 void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch)
 {//총알 나가는거 생성
 	if (bullet[i][3] == 0 || bullet[i][3] == 1)
@@ -561,90 +418,6 @@ void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, i
 	}
 }
 
-void Hcolblock(double dx, double dy, RECT* regg, int block[][20], int* score, int* combo, double bullet[][4], int i, int check, int ch)
-{
-	//총알-블록 충돌
-	for (int y = 0; y < 20; y++)
-	{
-		for (int x = 0; x < 20; x++)
-		{
-			RECT rec = { dx * x, dy * y, dx * (x + 1), dy * (y + 1) };
-			RECT temp;
-			if (check == 0)
-			{
-				if (IntersectRect(&temp, &regg[i], &rec))
-				{
-					if (ch == 0)
-					{
-						if (block[y][x] == 1)
-						{
-							block[y][x] = 0;
-							*score += 5;
-						}
-						else if (block[y][x] == 2)
-						{
-							bullet[i][0] = 0;
-							*combo = 0;
-						}
-					}
-					else
-					{
-						if (block[y][x] == 0)
-						{
-							block[y][x] = 1;
-							*score += 5;
-						}
-						else if (block[y][x] == 2)
-						{
-							bullet[i][0] = 0;
-							*combo = 0;
-						}
-					}
-				}
-			}
-			else
-			{
-				if (IntersectRect(&temp, &regg[i * 3], &rec) || IntersectRect(&temp, &regg[i * 3 + 1], &rec) || IntersectRect(&temp, &regg[i * 3 + 2], &rec))
-				{
-					if (block[y][x] == 1)
-					{
-						block[y][x] = 0;
-						*score += 5;
-					}
-				}
-			}
-		}
-	}
-}
-
-void Hcolenemy(double dx, double dy, RECT* regg, int block[][20], int* score, int* combo, double bullet[][4], int i, double effect[][17], double enemy[][5], double sgun[][3], int* scount, int check)
-{
-	//총알-적 충돌
-	for (int k = 0; k < LIMIT_ENEMY; k++)
-	{
-		if (enemy[k][0] == 1)
-		{
-			RECT rec = { enemy[k][1] - dx / 2, enemy[k][2] - dy / 2, enemy[k][1] + dx / 2, enemy[k][2] + dy / 2 };
-			RECT erec = { enemy[k][1] - 2 * dx / 2,enemy[k][2] - 2 * dy / 2 ,enemy[k][1] + 2 * dx / 2,enemy[k][2] + 2 * dy / 2 };
-			RECT temp;
-			if (check == 0)
-			{
-				if (IntersectRect(&temp, &regg[i], &rec))
-				{
-					DeathEnemy(enemy, effect, block, dx, dy, k, temp, erec, score, combo, sgun, scount);
-				}
-			}
-			else
-			{
-				if (IntersectRect(&temp, &regg[i * 3], &rec) || IntersectRect(&temp, &regg[i * 3 + 1], &rec) || IntersectRect(&temp, &regg[i * 3 + 2], &rec))
-				{
-
-					DeathEnemy(enemy, effect, block, dx, dy, k, temp, erec, score, combo, sgun, scount);
-				}
-			}
-		}
-	}
-}
 
 void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd)//일대일 승패 메세지
 {
@@ -656,18 +429,6 @@ void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd)//일대�
 		wsprintf(str, "Player WHITE WIN\nPress Enter key to reset game");
 	DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 	KillTimer(hWnd, 1);
-}
-
-void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double effect[][17], int i, HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd, BOOL* death)//일대일 총알 맞음
-{
-	RECT rec = { cx - dx / 2, cy - dy / 2, cx + dx / 2, cy + dy / 2 };
-	RECT temp;
-	if (IntersectRect(&temp, &regg[i], &rec))
-	{
-		DeathEffect(effect, cx, cy, dx, i);
-		Hgamewin(hMemDC, rectView, check, str, hWnd);
-		*death = true;
-	}
 }
 
 void Hcreateboad(int block[][20], double dx, double dy, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH hBrush3, HBRUSH oldBrush, HDC hMemDC)
@@ -732,60 +493,6 @@ void Henemyhatch(RECT rec, POINT* point, int block[][20], int x, int y, double d
 				SetBkColor(hMemDC, RGB(125, 125, 125));
 			oldBrush = (HBRUSH)SelectObject(hMemDC, ehBrush);
 			Rectangle(hMemDC, dx * x, dy * y, dx * (x + 1), dy * (y + 1));
-		}
-	}
-}
-
-void Henemycol(double enemy[][5], double dx, double dy, double cx, double cy, BOOL* infi, BOOL* death, double effect[][17], int* life, int* dcount, int i)
-{
-	//적-플레이어 충돌체크
-	RECT temp;
-	RECT rec = { enemy[i][1] - dx / 2, enemy[i][2] - dy / 2, enemy[i][1] + dx / 2, enemy[i][2] + dy / 2 };
-	RECT rec2 = { cx - dx / 2, cy - dy / 2, cx + dx / 2, cy + dy / 2 };
-	if (IntersectRect(&temp, &rec, &rec2))
-	{
-		if (*infi == false)
-		{
-			if (*death == FALSE)
-			{
-				*death = TRUE;
-				DeathEffect(effect, cx, cy, dx, 0);
-				*dcount = 20;
-				if (*life > 0)
-				{
-					(*life)--;
-				}
-			}
-		}
-	}
-}
-
-void Henemy(double enemy[][5], int block[][20], double sgun[][3], double dx, double dy, double cx, double cy, BOOL* infi, BOOL* death, double effect[][17], int* life, int* dcount,
-	HPEN ePen, HPEN OldPen, HBRUSH ehBrush, HBRUSH oldBrush, HDC hMemDC)
-{
-	//적
-	for (int i = 0; i < LIMIT_ENEMY; i++)
-	{
-		OldPen = (HPEN)SelectObject(hMemDC, ePen);
-		if (enemy[i][0] == 1)
-		{
-			POINT point[9] = { { enemy[i][1] - 2 * dx / 2,enemy[i][2] - 2 * dy / 2 },{ enemy[i][1] - 2 * dx / 2,enemy[i][2] },{ enemy[i][1] - 2 * dx / 2,enemy[i][2] + 2 * dy / 2 },
-			{ enemy[i][1], enemy[i][2] - 2 * dy / 2 },{ enemy[i][1], enemy[i][2] },{ enemy[i][1], enemy[i][2] + 2 * dy / 2 },
-			{ enemy[i][1] + 2 * dx / 2,enemy[i][2] + 2 * dy / 2 },{ enemy[i][1] + 2 * dx / 2,enemy[i][2] },{ enemy[i][1] + 2 * dx / 2,enemy[i][2] - 2 * dy / 2 } };
-			RECT erec = { enemy[i][1] - dx / 2, enemy[i][2] - dy / 2,enemy[i][1] + dx / 2, enemy[i][2] + dy / 2 };
-			for (int y = 2; y < 20; y++)
-			{
-				for (int x = 0; x < 20; x++)
-				{
-					RECT rec = { dx * x, dy * y, dx * (x + 1), dy * (y + 1) };
-					//적에 의해 블록 변화
-					Hchangeblock(block, x, y, rec, point, dx, dy, sgun, erec);
-					//적 주변의 빗금
-					Henemyhatch(rec, point, block, x, y, dx, dy, ehBrush, oldBrush, hMemDC);
-				}
-			}
-			//적-플레이어 충돌체크
-			Henemycol(enemy, dx, dy, cx, cy, infi, death, effect, life, dcount, i);
 		}
 	}
 }
@@ -1006,107 +713,6 @@ void Trespawneffect(double reffect[][4], int gametime, BOOL* death, double enemy
 					enemy[(int)reffect[i][3]][0] = 1;
 				}
 				reffect[i][0] = -1;
-			}
-		}
-	}
-}
-
-void Tenemyspwantime(int* ecount, int gametime, int* etime)//적 스폰 시간 조절
-{
-	if (*ecount < LIMIT_ENEMY - 1)
-		(*ecount)++;
-	else
-		*ecount = 0;
-	if (gametime < 20)
-	{
-		*etime = 25;
-	}
-	else if (gametime >= 20 && gametime < 40)
-	{
-		*etime = 20;
-	}
-	else if (gametime >= 40 && gametime < 60)
-	{
-		*etime = 10;
-	}
-	else if (gametime >= 60)
-	{
-		*etime = 5;
-	}
-}
-
-void Tcreateenemy(double cy, RECT rectView, double enemy[][5], int ecount)//적생성
-{
-	if (cy < rectView.bottom * 1 / 2)
-	{
-		enemy[ecount][1] = rand() % rectView.right;
-		enemy[ecount][2] = rand() % (rectView.bottom * 1 / 2) + rectView.top;
-	}
-	else
-	{
-		enemy[ecount][1] = rand() % rectView.right;
-		enemy[ecount][2] = rand() % (rectView.bottom * 1 / 2) + (rectView.bottom * 1 / 2);
-	}
-	enemy[ecount][3] = rand() % 3 + 5;
-}
-
-void Trespawnclear(int level, int block[][20], double enemy[][5], double effect[][17], double dx, double dy)//리스폰 주변 적 제거
-{
-	for (int i = 0; i < 20; i++)
-	{
-		for (int j = 0; j < 20; j++)
-		{
-			if (level == 1)
-			{
-				if (i > 3 && i < 10 && j > 5 && j < 15)
-				{
-					block[i][j] = 0;
-				}
-			}
-			else if (level == 0)
-			{
-				if (i > 3 && i < 9 && j > 5 && j < 10)
-				{
-					block[i][j] = 0;
-				}
-			}
-			else if (level == 2)
-			{
-				if (i > 6 && i < 9 && j > 9 && j < 12)
-				{
-					block[i][j] = 0;
-				}
-			}
-
-			for (int k = 0; k < LIMIT_ENEMY; k++)
-			{
-				if (enemy[k][0] == 1)
-				{
-					if (level == 1)
-					{
-						if (5 * dx <= enemy[k][1] && enemy[k][1] <= 15 * dx && 3 * dy <= enemy[k][2] && enemy[k][2] <= 10 * dy)
-						{
-							enemy[k][0] = 0;
-							DeathEffect(effect, enemy[k][1], enemy[k][2], dx, k + 1);
-						}
-					}
-					else if (level == 0)
-					{
-						if (5 * dx < enemy[k][1] && enemy[k][1] < 10 * dx && 3 * dy < enemy[k][2] && enemy[k][2] < 9 * dy)
-						{
-							enemy[k][0] = 0;
-							DeathEffect(effect, enemy[k][1], enemy[k][2], dx, k + 1);
-						}
-					}
-					else if (level == 2)
-					{
-						if (7 * dx < enemy[k][1] && enemy[k][1] < 13 * dx && 5 * dy < enemy[k][2] && enemy[k][2] < 10 * dy)
-						{
-							enemy[k][0] = 0;
-							DeathEffect(effect, enemy[k][1], enemy[k][2], dx, k + 1);
-						}
-					}
-				}
 			}
 		}
 	}

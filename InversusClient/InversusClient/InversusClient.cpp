@@ -4,7 +4,7 @@
 #include <atlImage.h>
 #include <conio.h>
 
-#define SERVERIP "127.0.0.1"
+//#define SERVERIP "127.0.0.1"
 #define SERVERPORT 9000
 #define BUFSIZE 3000
 #define MAX_CLNT 256
@@ -17,6 +17,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 DWORD WINAPI ClientMain(LPVOID arg);
 DWORD WINAPI SendMsg(LPVOID arg);//쓰레드 전송함수
 DWORD WINAPI RecvMsg(LPVOID arg);//쓰레드 수신함수
+BOOL CALLBACK DialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 SOCKET sock;
 
@@ -36,10 +37,12 @@ CData clnt_data;
 Clinfo clnt_info;
 
 int clientcount = 5;
+char serverip[32];
 
+HWND hWnd;
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
-	HWND hWnd;
+	//HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
 	g_hinst = hinstance;
@@ -76,6 +79,26 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdPa
 	return Message.wParam;
 }
 
+BOOL CALLBACK DialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (iMsg) {
+	case WM_INITDIALOG:
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetDlgItemText(hDlg, IDC_IPADDRESS1, serverip, 100); // 스트링 복사
+			EndDialog(hDlg, 0);
+			break;
+		case IDCANCEL:
+			EndDialog(hDlg, 0);
+			break;
+		}
+		break;
+	}
+	return 0;
+}
+
 DWORD WINAPI ClientMain(LPVOID arg)
 {
 	WSADATA wsa;
@@ -86,10 +109,12 @@ DWORD WINAPI ClientMain(LPVOID arg)
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 
+	DialogBox(g_hinst, MAKEINTRESOURCE(IDC_IPADDRESS1), hWnd, (DLGPROC)&DialogProc);
+
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
+	serveraddr.sin_addr.s_addr = inet_addr(serverip);
 	serveraddr.sin_port = htons(SERVERPORT);
 	connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 
@@ -99,6 +124,8 @@ DWORD WINAPI ClientMain(LPVOID arg)
 	suBuffer[GetSize] = '\0';
 	clnt_info = *(Clinfo*)suBuffer;
 	clnt_data.ci = clnt_info.ci;
+
+	clnt_data.dx = 0, clnt_data.dy = 0;
 
 	sendThread = CreateThread(NULL, 0, SendMsg, NULL, 0, NULL);
 	recvThread = CreateThread(NULL, 0, RecvMsg, NULL, 0, NULL);
@@ -264,9 +291,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							//총알 쏜거
 							Hshotbullet(parray[0].bullet, parray[0].regg, hMemDC, i, 0, ecolor, 0);
 							//총알-블록 충돌
-							Hcolblock(sx, sy, parray[0].regg, block, &score, &combo, parray[0].bullet, i, 0, 0);
+							//Hcolblock(sx, sy, parray[0].regg, block, &score, &combo, parray[0].bullet, i, 0, 0);
 							//총알-적 충돌
-							Hcolplayer(parray[1].cx, parray[1].cy, sx, sy, parray[0].regg, effect, i, hMemDC, rectView, 0, str, hWnd, &death);
+							//Hcolplayer(parray[1].cx, parray[1].cy, sx, sy, parray[0].regg, effect, i, hMemDC, rectView, 0, str, hWnd, &death);
 						}
 					}
 				}

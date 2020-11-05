@@ -319,39 +319,6 @@ void SetGame(HWND hWnd, RECT* rectView, RECT* tect, double* dx, double* dy, int 
 	SetTimer(hWnd, 1, 100, NULL);
 }
 
-void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//그라데이션
-{
-	int rs, gs, bs;
-	rs = GetRValue(start);
-	gs = GetGValue(start);
-	bs = GetBValue(start);
-	int rf, gf, bf;
-	rf = GetRValue(finish);
-	gf = GetGValue(finish);
-	bf = GetBValue(finish);
-
-	TRIVERTEX vert[2];
-	GRADIENT_RECT gRect;
-	vert[0].x = prect.left;
-	vert[0].y = prect.top;
-	vert[0].Red = rs * 16 * 16;
-	vert[0].Green = gs * 16 * 16;
-	vert[0].Blue = bs * 16 * 16;
-	vert[0].Alpha = 0x0000;
-	vert[1].x = prect.right;
-	vert[1].y = prect.bottom;
-	vert[1].Red = rf * 16 * 16;
-	vert[1].Green = gf * 16 * 16;
-	vert[1].Blue = bf * 16 * 16;
-	vert[1].Alpha = 0x0000;
-	gRect.UpperLeft = 1;
-	gRect.LowerRight = 0;
-	if (direct)
-		GradientFill(pDC, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_H);
-	else
-		GradientFill(pDC, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
-}
-
 void DeathEffect(double effect[][17], double x, double y, int dx, int i)//죽을때 이펙트
 {
 	//0-시간 1-x1 2-y1 3-x2 4-y2 5-x3 6-y3 7-x4 8-y4
@@ -423,116 +390,6 @@ void DeathEnemy(double enemy[][5], double effect[][17], int block[][20], double 
 	*/
 	(*score) += 10;
 	(*combo)++;
-}
-
-void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch)
-{//총알 나가는거 생성
-	if (bullet[i][3] == 0 || bullet[i][3] == 1)
-	{
-		if (check == 0)
-		{
-			regg[i].left = bullet[i][1] - 50;
-			regg[i].top = bullet[i][2] - 5;
-			regg[i].right = bullet[i][1] + 50;
-			regg[i].bottom = bullet[i][2] + 5;
-			if (ch == 0)
-			{
-				if (bullet[i][3] == 0)
-					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], TRUE);
-				else
-					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], TRUE);
-			}
-			else
-			{
-				if (bullet[i][3] == 0)
-					DrawGr(hMemDC, RGB(20, 20, 20), RGB(255, 255, 255), regg[i], TRUE);
-				else
-					DrawGr(hMemDC, RGB(255, 255, 255), RGB(20, 20, 20), regg[i], TRUE);
-			}
-		}
-		else
-		{
-			regg[3 * i].left = bullet[i][1] - 50;
-			regg[3 * i].top = bullet[i][2] - 5;
-			regg[3 * i].right = bullet[i][1] + 50;
-			regg[3 * i].bottom = bullet[i][2] + 5;
-
-			regg[3 * i + 1].left = bullet[i][1] - 50;
-			regg[3 * i + 1].top = bullet[i][2] + 45;
-			regg[3 * i + 1].right = bullet[i][1] + 50;
-			regg[3 * i + 1].bottom = bullet[i][2] + 55;
-
-			regg[3 * i + 2].left = bullet[i][1] - 50;
-			regg[3 * i + 2].top = bullet[i][2] - 55;
-			regg[3 * i + 2].right = bullet[i][1] + 50;
-			regg[3 * i + 2].bottom = bullet[i][2] - 45;
-			if (bullet[i][3] == 0)
-			{
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i], TRUE);
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 1], TRUE);
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 2], TRUE);
-			}
-			else
-			{
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i], TRUE);
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 1], TRUE);
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 2], TRUE);
-			}
-		}
-	}
-	else
-	{
-		if (check == 0)
-		{
-			regg[i].left = bullet[i][1] - 5;
-			regg[i].top = bullet[i][2] - 50;
-			regg[i].right = bullet[i][1] + 5;
-			regg[i].bottom = bullet[i][2] + 50;
-			if (ch == 0)
-			{
-				if (bullet[i][3] == 2)
-					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], FALSE);
-				else
-					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], FALSE);
-			}
-			else
-			{
-				if (bullet[i][3] == 2)
-					DrawGr(hMemDC, RGB(255, 255, 255), RGB(20, 20, 20), regg[i], FALSE);
-				else
-					DrawGr(hMemDC, RGB(20, 20, 20), RGB(255, 255, 255), regg[i], FALSE);
-			}
-		}
-		else
-		{
-			regg[3 * i].left = bullet[i][1] - 5;
-			regg[3 * i].top = bullet[i][2] - 50;
-			regg[3 * i].right = bullet[i][1] + 5;
-			regg[3 * i].bottom = bullet[i][2] + 50;
-
-			regg[3 * i + 1].left = bullet[i][1] + 45;
-			regg[3 * i + 1].top = bullet[i][2] - 50;
-			regg[3 * i + 1].right = bullet[i][1] + 55;
-			regg[3 * i + 1].bottom = bullet[i][2] + 50;
-
-			regg[3 * i + 2].left = bullet[i][1] - 55;
-			regg[3 * i + 2].top = bullet[i][2] - 50;
-			regg[3 * i + 2].right = bullet[i][1] - 45;
-			regg[3 * i + 2].bottom = bullet[i][2] + 50;
-			if (bullet[i][3] == 2)
-			{
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i], FALSE);
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 1], FALSE);
-				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 2], FALSE);
-			}
-			else
-			{
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i], FALSE);
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 1], FALSE);
-				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 2], FALSE);
-			}
-		}
-	}
 }
 
 void Hcolblock(double dx, double dy, RECT* regg, int block[][20], int* score, int* combo, double bullet[][4], int i, int check, int ch)
@@ -644,30 +501,6 @@ void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double e
 	}
 }
 
-void Hcreateboad(int block[][20], double dx, double dy, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH hBrush3, HBRUSH oldBrush, HDC hMemDC)
-{//보드판
-	for (int i = 2; i < 20; i++)
-	{
-		for (int j = 0; j < 20; j++)
-		{
-			if (block[i][j] == 0)//흰색
-			{
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
-			}
-			else if (block[i][j] == 1)//검정
-			{
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
-			}
-			else if (block[i][j] == 2)//회색
-			{
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush3);
-				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
-			}
-		}
-	}
-}
 
 void Hchangeblock(int block[][20], int x, int y, RECT rec, POINT* point, double dx, double dy, double sgun[][3], RECT erec)
 {
@@ -691,24 +524,6 @@ void Hchangeblock(int block[][20], int x, int y, RECT rec, POINT* point, double 
 	}
 }
 
-void Henemyhatch(RECT rec, POINT* point, int block[][20], int x, int y, double dx, double dy, HBRUSH ehBrush, HBRUSH oldBrush, HDC hMemDC)
-{
-	//적 주변의 빗금
-	for (int k = 0; k < 9; k++)
-	{
-		if (PtInRect(&rec, point[k]))
-		{
-			if (block[y][x] == 0)
-				SetBkColor(hMemDC, RGB(255, 255, 255));
-			else if (block[y][x] == 1)
-				SetBkColor(hMemDC, RGB(0, 0, 0));
-			else if (block[y][x] == 2)
-				SetBkColor(hMemDC, RGB(125, 125, 125));
-			oldBrush = (HBRUSH)SelectObject(hMemDC, ehBrush);
-			Rectangle(hMemDC, dx * x, dy * y, dx * (x + 1), dy * (y + 1));
-		}
-	}
-}
 
 void Henemycol(double enemy[][5], double dx, double dy, double cx, double cy, BOOL* infi, BOOL* death, double effect[][17], int* life, int* dcount, int i)
 {
@@ -734,57 +549,6 @@ void Henemycol(double enemy[][5], double dx, double dy, double cx, double cy, BO
 	}
 }
 
-void Henemy(double enemy[][5], int block[][20], double sgun[][3], double dx, double dy, double cx, double cy, BOOL* infi, BOOL* death, double effect[][17], int* life, int* dcount,
-	HPEN ePen, HPEN OldPen, HBRUSH ehBrush, HBRUSH oldBrush, HDC hMemDC)
-{
-	//적
-	for (int i = 0; i < LIMIT_ENEMY; i++)
-	{
-		OldPen = (HPEN)SelectObject(hMemDC, ePen);
-		if (enemy[i][0] == 1)
-		{
-			POINT point[9] = { { enemy[i][1] - 2 * dx / 2,enemy[i][2] - 2 * dy / 2 },{ enemy[i][1] - 2 * dx / 2,enemy[i][2] },{ enemy[i][1] - 2 * dx / 2,enemy[i][2] + 2 * dy / 2 },
-			{ enemy[i][1], enemy[i][2] - 2 * dy / 2 },{ enemy[i][1], enemy[i][2] },{ enemy[i][1], enemy[i][2] + 2 * dy / 2 },
-			{ enemy[i][1] + 2 * dx / 2,enemy[i][2] + 2 * dy / 2 },{ enemy[i][1] + 2 * dx / 2,enemy[i][2] },{ enemy[i][1] + 2 * dx / 2,enemy[i][2] - 2 * dy / 2 } };
-			RECT erec = { enemy[i][1] - dx / 2, enemy[i][2] - dy / 2,enemy[i][1] + dx / 2, enemy[i][2] + dy / 2 };
-			for (int y = 2; y < 20; y++)
-			{
-				for (int x = 0; x < 20; x++)
-				{
-					RECT rec = { dx * x, dy * y, dx * (x + 1), dy * (y + 1) };
-					//적에 의해 블록 변화
-					Hchangeblock(block, x, y, rec, point, dx, dy, sgun, erec);
-					//적 주변의 빗금
-					Henemyhatch(rec, point, block, x, y, dx, dy, ehBrush, oldBrush, hMemDC);
-				}
-			}
-			//적-플레이어 충돌체크
-			Henemycol(enemy, dx, dy, cx, cy, infi, death, effect, life, dcount, i);
-		}
-	}
-}
-
-void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRUSH eBrush, HPEN cPen, HPEN ePen, HDC hMemDC, double dx, double dy, double reffect[][4])
-{//부활 이펙트
-	for (int i = 0; i < LIMIT_ENEMY; i++)
-	{
-		//부활 이펙트
-		if (reffect[i][0] > 0)
-		{
-			if (reffect[i][3] == -1)
-				OldPen = (HPEN)SelectObject(hMemDC, cPen);
-			else
-				OldPen = (HPEN)SelectObject(hMemDC, ePen);
-			oldBrush = (HBRUSH)SelectObject(hMemDC, unBrush);
-			Rectangle(hMemDC, reffect[i][1] - dx / 2 - reffect[i][0], reffect[i][2] - dy / 2 - reffect[i][0], reffect[i][1] + dx / 2 + reffect[i][0], reffect[i][2] + dy / 2 + reffect[i][0]);
-			if (reffect[i][3] == -1)
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-			else
-				oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-			Rectangle(hMemDC, reffect[i][1] - dx / 2 + reffect[i][0], reffect[i][2] - dy / 2 + reffect[i][0], reffect[i][1] + dx / 2 - reffect[i][0], reffect[i][2] + dy / 2 - reffect[i][0]);
-		}
-	}
-}
 
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
 {
@@ -800,23 +564,6 @@ void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보�
 	}
 }
 
-void Hdeatheffect(double effect[][17], HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC)//데스이펙트
-{
-	for (int i = 0; i < LIMIT_ENEMY + 1; i++)
-	{
-		if (i == 0)
-			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-		else
-			oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-		if (effect[i][0] > 0)
-		{
-			Ellipse(hMemDC, effect[i][1] - effect[i][9], effect[i][2] - effect[i][9], effect[i][1] + effect[i][9], effect[i][2] + effect[i][9]);
-			Ellipse(hMemDC, effect[i][3] - effect[i][10], effect[i][4] - effect[i][10], effect[i][3] + effect[i][10], effect[i][4] + effect[i][10]);
-			Ellipse(hMemDC, effect[i][5] - effect[i][11], effect[i][6] - effect[i][11], effect[i][5] + effect[i][11], effect[i][6] + effect[i][11]);
-			Ellipse(hMemDC, effect[i][7] - effect[i][12], effect[i][8] - effect[i][12], effect[i][7] + effect[i][12], effect[i][8] + effect[i][12]);
-		}
-	}
-}
 
 void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd)//게임오버메세지
 {
@@ -827,18 +574,6 @@ void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd)//게임
 	KillTimer(hWnd, 1);
 }
 
-void Hscorebord(HBRUSH oldBrush, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC, RECT rectView, double dx, double dy, int life, HFONT Font, HFONT OldFont, char* str, int score, int combo, RECT tect, LOGFONT* lf, BOOL multi)
-{//상단 스코어보드판
-	oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-	Rectangle(hMemDC, 0, 0, rectView.right, rectView.top);
-	lf->lfHeight = dy;
-	OldFont = (HFONT)SelectObject(hMemDC, Font);
-	
-	{
-		wsprintf(str, "versus mode");
-		DrawText(hMemDC, str, -1, &tect, DT_LEFT);
-	}
-}
 
 void Hplayersgun(double sgun[][3], double dx, double dy, double bullet[][4], double cx, double cy, int* score)//플레이어가 특수총알 먹는거
 {
@@ -890,14 +625,6 @@ void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double 
 {//총알 돌아가는거
 	rx[i] = dx / 3 * cos(seta + i) + cx;
 	ry[i] = dy / 3 * sin(seta + i) + cy;
-	if (death == false)
-	{
-		if (bullet[i][0] == 1)
-			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-		else
-			oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-		Ellipse(hMemDC, rx[i] - dx / 10, ry[i] - dx / 10, rx[i] + dx / 10, ry[i] + dx / 10);
-	}
 }
 
 void Kshotbullet(double bullet[][4], double cx, double cy, int check)//방향키 총알 발사
