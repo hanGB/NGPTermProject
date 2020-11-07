@@ -1,18 +1,17 @@
 
+#include "stdafx.h"
 #include "resource.h"
-#include "InversusServer.h"
 #include <atlImage.h>
+#include "IVSSSGlobals.h"
+#include "IVSSSNetwork.h"
+#include "IVSSSUpdate.h"
+#include "IVSSSGame.h"
+
 
 #ifdef _DEBUG 
 	#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console" ) 
 #endif
 
-
-#define SERVERPORT 9000
-#define BUFSIZE 3000
-#define MAX_CLNT 256
-
-#define PLAYER_SPEED 1
 
 HINSTANCE g_hinst;
 LPCTSTR lpszClass = "Window Class Name";
@@ -27,15 +26,6 @@ SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
 HANDLE hMutex;//뮤텍스
 
 player parray[2];
-
-typedef struct Clinfo {
-	int ci;
-}Clinfo;
-
-typedef struct CData {//클라이언트로부터 받은 데이터
-	int ci;
-	int dx, dy; //방향
-}CData;
 
 Clinfo clnt_info[MAX_CLNT];
 CData clnt_data[MAX_CLNT];

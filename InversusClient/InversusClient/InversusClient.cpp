@@ -1,14 +1,13 @@
 
+#include "stdafx.h"
 #include "resource.h"
-#include "InversusClient.h"
 #include <atlImage.h>
 #include <conio.h>
-
-//#define SERVERIP "127.0.0.1"
-#define SERVERPORT 9000
-#define BUFSIZE 3000
-#define MAX_CLNT 256
-
+#include "IVSSCNetwork.h"
+#include "IVSSCGlobals.h"
+#include "IVSSCGame.h"
+#include "IVSSCUpdate.h"
+#include "IVSSCRender.h"
 
 HINSTANCE g_hinst;
 LPCTSTR lpszClass = "Window Class Name";
@@ -22,16 +21,6 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 SOCKET sock;
 
 player parray[MAX_CLNT];
-
-typedef struct Clinfo {
-	int ci;
-}Clinfo;
-
-typedef struct CData {//클라이언트로부터 받은 데이터
-	int ci;
-	int dx = 0, dy = 0; //방향
-}CData;
-
 
 CData clnt_data;
 Clinfo clnt_info;
