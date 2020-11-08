@@ -6,6 +6,7 @@
 #include "IVSSSNetwork.h"
 #include "IVSSSUpdate.h"
 #include "IVSSSGame.h"
+#include <iostream>
 
 
 #ifdef _DEBUG 
@@ -26,6 +27,8 @@ SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
 HANDLE hMutex;//뮤텍스
 
 player parray[MAX_PLAYER];
+GameObjects g_GameObjects;
+
 
 Clinfo clnt_info[MAX_CLNT];
 CData clnt_data[MAX_CLNT];
@@ -95,6 +98,9 @@ DWORD WINAPI ServerMain(LPVOID arg)
 	int addrlen;
 	HANDLE hTread;
 
+	//게임 오브젝트 초기화
+	ZeroMemory(&g_GameObjects, sizeof(GameObjects));
+
 	while (1)
 	{
 		addrlen = sizeof(clientaddr);
@@ -139,6 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		GetClientRect(hWnd, &rectView);
 		srand((unsigned)time(NULL));
 		SetTimer(hWnd, 1, 100, NULL);
+
 		return 0;
 	case WM_PAINT:
 	{

@@ -19,7 +19,10 @@ DWORD WINAPI ClientMain(LPVOID arg);//클라이언트 주 스레드
 
 SOCKET sock;
 
-player parray[MAX_CLNT];
+player parray[MAX_PLAYER];
+int block[BOARD_SIZE][BOARD_SIZE] = { 0 };//보드
+
+GameObjects g_GameObjects;
 
 CData clnt_data;
 Clinfo clnt_info;
@@ -106,6 +109,8 @@ DWORD WINAPI ClientMain(LPVOID arg)
 	serveraddr.sin_port = htons(SERVERPORT);
 	connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 
+	ZeroMemory(&g_GameObjects, sizeof(GameObjects));
+
 	int GetSize;
 	char suBuffer[BUFSIZE];
 	GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
@@ -117,7 +122,7 @@ DWORD WINAPI ClientMain(LPVOID arg)
 
 	sendThread = CreateThread(NULL, 0, SendMsg, NULL, 0, NULL);
 	recvThread = CreateThread(NULL, 0, RecvMsg, NULL, 0, NULL);
-	WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다./
+	WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다.
 	WaitForSingleObject(recvThread, INFINITE);//수신용 쓰레드가 중지될때까지 기다린다.
 
 }
@@ -169,8 +174,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static int level = 1;
 
 	static BOOL multi = true;
-
-	static int block[20][20] = { 0 };//보드
 									 //메세지 처리하기
 	switch (iMessage) {
 	case WM_CREATE:
@@ -179,7 +182,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
 			, &ten, &gametime, level, sgun, &scount, multi);
 		ZeroMemory(&lf, sizeof(lf));
+
 		multireset(parray, rectView, sx, sy);
+		SetTimer(hWnd, 3, 16, NULL);
 		return 0;
 	case WM_PAINT:
 	{
@@ -330,8 +335,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		case 2:
 
 			break;
+
+		case 3:
+			//60fps로 화면 다시 그리기
+			InvalidateRect(hWnd, NULL, FALSE);
+			break;
 		}
-		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 
 	case WM_CHAR:
@@ -415,7 +424,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			}
 		}
 	}
-	InvalidateRect(hWnd, NULL, FALSE);
 	break;
 	case WM_KEYUP:
 
@@ -435,8 +443,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		{
 			clnt_data.p_key.KEY_A = false;
 		}
-
-		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {

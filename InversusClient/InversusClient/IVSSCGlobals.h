@@ -8,6 +8,10 @@
 #define BUFSIZE 3000
 #define MAX_CLNT 256
 
+#define MAX_PLAYER 5 //최대 플레이어
+
+#define BOARD_SIZE 20 //보드 크기
+
 typedef struct Clinfo {
 	int ci;
 }Clinfo;
@@ -26,11 +30,26 @@ typedef struct KeyInputs
 
 };
 
-typedef struct CData {//클라이언트로부터 받은 데이터
+typedef struct CData {//서버로 보내는 데이터
 	int ci;
 	int dx = 0, dy = 0; //방향
 	KeyInputs p_key;
 }CData;
+
+typedef struct player {
+	int nu;
+	BOOL enable = false;
+	double rx[7], ry[7];
+	double cx, cy;
+	double bullet[6][4] = { 0 };
+	RECT regg[6];
+}player;
+
+
+typedef struct GameObjects {//서버로 받는 데이터
+	player players[MAX_PLAYER];
+	int blocks[BOARD_SIZE][BOARD_SIZE];
+}GameObjects;
 
 
 // 게임 로직 관련
@@ -42,12 +61,3 @@ typedef struct CData {//클라이언트로부터 받은 데이터
 #define LIMIT_EFFECT 2
 
 #define KEYUP(vk_code) ((GetAsyncKeyState(vk_code)) ? 0 : 1)
-
-typedef struct player {
-	int nu;
-	BOOL enable = false;
-	double rx[7], ry[7];
-	double cx, cy;
-	double bullet[6][4] = { 0 };
-	RECT regg[6];
-}player;

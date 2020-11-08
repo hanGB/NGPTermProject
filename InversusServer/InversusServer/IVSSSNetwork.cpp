@@ -7,7 +7,8 @@ extern int clientCount;
 extern SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
 extern HANDLE hMutex;//뮤텍스
 
-extern player parray[2];
+extern GameObjects g_GameObjects;
+extern player parray[MAX_PLAYER];
 
 extern CData clnt_data[MAX_CLNT];
 
@@ -47,19 +48,23 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		Sleep(10);
 		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer) - 1, 0);
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
-		suBuffer[GetSize] = '\0';
-		CData* tmp = (CData*)suBuffer;
-		playerid = tmp->ci;
+		if (GetSize >= 0 && GetSize < 3000) {
+			suBuffer[GetSize] = '\0';
+			CData* tmp = (CData*)suBuffer;
+			playerid = tmp->ci;
 
-		clnt_data[playerid] = *tmp;
+			clnt_data[playerid] = *tmp;
 
-		move_player_object(playerid);
+			move_player_object(playerid);
+		
+			player temp = parray[playerid];
+			temp.nu = playerid;
 
-		player temp = parray[playerid];
-		temp.nu = playerid;
+			g_GameObjects.players[playerid] = temp;
+		}
 		for (int i = 0; i < clientCount; i++)
 		{
-			send(clientSocks[i], (char*)&temp, sizeof(player), 0);
+			send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
 		}
 		ReleaseMutex(hMutex);//뮤텍스 중지

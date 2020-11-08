@@ -8,6 +8,8 @@
 
 #define MAX_PLAYER 5 //최대 플레이어
 
+#define BOARD_SIZE 20 //보드 크기
+
 typedef struct Clinfo {
 	int ci;
 }Clinfo;
@@ -23,7 +25,6 @@ typedef struct KeyInputs
 	bool KEY_A = false;
 	bool KEY_S = false;
 	bool KEY_D = false;
-
 };
 
 typedef struct CData {//클라이언트로부터 받은 데이터
@@ -31,16 +32,6 @@ typedef struct CData {//클라이언트로부터 받은 데이터
 	int dx, dy; //방향
 	KeyInputs p_key;
 }CData;
-
-
-// 게임 로직 관련
-#define PLAYER_SPEED 1
-
-#define LIMIT_ENEMY 20
-#define LIMIT_SGUN 100
-
-#define LIMIT_BGM 5
-#define LIMIT_EFFECT 2
 
 typedef struct player {
 	int nu;
@@ -51,3 +42,17 @@ typedef struct player {
 	RECT regg[6];
 }player;
 
+typedef struct GameObjects {//클라이언트로 보낼 데이터
+	player players[MAX_PLAYER];
+	int blocks[BOARD_SIZE][BOARD_SIZE];
+}GameObjects;
+
+
+// 게임 로직 관련
+#define PLAYER_SPEED 1
+
+#define LIMIT_ENEMY 20
+#define LIMIT_SGUN 100
+
+#define LIMIT_BGM 5
+#define LIMIT_EFFECT 2

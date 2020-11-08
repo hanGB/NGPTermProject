@@ -5,7 +5,10 @@
 
 extern SOCKET sock;
 
-extern player parray[MAX_CLNT];
+extern player parray[MAX_PLAYER];
+extern int block[BOARD_SIZE][BOARD_SIZE];
+
+extern GameObjects g_GameObjects;
 
 extern CData clnt_data;
 extern Clinfo clnt_info;
@@ -43,10 +46,22 @@ DWORD WINAPI RecvMsg(LPVOID arg) {
 		Sleep(10);
 		int GetSize;
 		char suBuffer[BUFSIZE];
-		GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
-		suBuffer[GetSize] = '\0';
-		player temp = *(player*)suBuffer;
-		parray[temp.nu] = temp;
+
+
+		//GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
+
+		recvn(sock, (char*)&g_GameObjects, sizeof(GameObjects), 0);
+
+		memcpy(block, g_GameObjects.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
+		memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
+
+		/*if (GetSize >= 0 && GetSize < 3000) {
+			suBuffer[GetSize] = '\0';
+			GameObjects temp = *(GameObjects*)suBuffer;
+
+			memcpy(block, temp.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
+			memcpy(parray, temp.players, sizeof(int) * MAX_PLAYER);
+		}*/
 	}
 	return 0;
 }
