@@ -335,24 +335,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		break;
 
 	case WM_CHAR:
-		if (multi == true)
+		
+		if (wParam == 'w' || wParam == 'W')
 		{
-			if (wParam == 'u' || wParam == 'U')
-			{
-				Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 2);
-			}
-			else if (wParam == 'j' || wParam == 'J')
-			{
-				Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 3);
-			}
-			else if (wParam == 'h' || wParam == 'H')
-			{
-				Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 1);
-			}
-			else if (wParam == 'k' || wParam == 'K')
-			{
-				Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 0);
-			}
+			clnt_data.p_key.KEY_W = true;
+		}
+		else if (wParam == 's' || wParam == 'S')
+		{
+			clnt_data.p_key.KEY_S = true;
+		}
+		else if (wParam == 'd' || wParam == 'D')
+		{
+			clnt_data.p_key.KEY_D = true;
+		}
+		else if (wParam == 'a' || wParam == 'A')
+		{
+			clnt_data.p_key.KEY_A = true;
+		}
+
+		
+		if (wParam == 'u' || wParam == 'U')
+		{
+			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 2);
+		}
+		else if (wParam == 'j' || wParam == 'J')
+		{
+			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 3);
+		}
+		else if (wParam == 'h' || wParam == 'H')
+		{
+			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 1);
+		}
+		else if (wParam == 'k' || wParam == 'K')
+		{
+			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 0);
 		}
 		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
@@ -365,15 +381,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		{
 			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 2);
 		}
-		else if (wParam == VK_NUMPAD2)
+		if (wParam == VK_NUMPAD2)
 		{
 			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 3);
 		}
-		else if (wParam == VK_NUMPAD1)
+		if (wParam == VK_NUMPAD1)
 		{
 			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 1);
 		}
-		else if (wParam == VK_NUMPAD3)
+		if (wParam == VK_NUMPAD3)
 		{
 			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 0);
 		}
@@ -402,6 +418,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	InvalidateRect(hWnd, NULL, FALSE);
 	break;
 	case WM_KEYUP:
+
+		if (wParam == 'w' || wParam == 'W')
+		{
+			clnt_data.p_key.KEY_W = false;
+		}
+		if (wParam == 's' || wParam == 'S')
+		{
+			clnt_data.p_key.KEY_S = false;
+		}
+		if (wParam == 'd' || wParam == 'D')
+		{
+			clnt_data.p_key.KEY_D = false;
+		}
+		if (wParam == 'a' || wParam == 'A')
+		{
+			clnt_data.p_key.KEY_A = false;
+		}
 
 		InvalidateRect(hWnd, NULL, FALSE);
 		break;

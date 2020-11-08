@@ -6,13 +6,30 @@
 #define BUFSIZE 3000
 #define MAX_CLNT 256
 
+#define MAX_PLAYER 5 //최대 플레이어
+
 typedef struct Clinfo {
 	int ci;
 }Clinfo;
 
+typedef struct KeyInputs
+{
+	bool ARROW_UP = false;
+	bool ARROW_DOWN = false;
+	bool ARROW_LEFT = false;
+	bool ARROW_RIGHT = false;
+
+	bool KEY_W = false;
+	bool KEY_A = false;
+	bool KEY_S = false;
+	bool KEY_D = false;
+
+};
+
 typedef struct CData {//클라이언트로부터 받은 데이터
 	int ci;
 	int dx, dy; //방향
+	KeyInputs p_key;
 }CData;
 
 

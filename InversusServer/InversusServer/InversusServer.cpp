@@ -25,7 +25,7 @@ int clientCount = 0;
 SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
 HANDLE hMutex;//뮤텍스
 
-player parray[2];
+player parray[MAX_PLAYER];
 
 Clinfo clnt_info[MAX_CLNT];
 CData clnt_data[MAX_CLNT];

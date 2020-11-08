@@ -3,7 +3,7 @@
 #include "IVSSSGame.h"
 #include "IVSSSUpdate.h"
 
-extern player parray[2];
+extern player parray[MAX_PLAYER];
 
 extern CData clnt_data[MAX_CLNT];
 
@@ -12,8 +12,30 @@ extern double seta;
 
 void move_player_object(int playerid)
 {
+	if (clnt_data[playerid].p_key.KEY_W)
+	{
+		parray[playerid].cy -= double(PLAYER_SPEED);
+	}
+	
+	if (clnt_data[playerid].p_key.KEY_A)
+	{
+		parray[playerid].cx -= double(PLAYER_SPEED);
+	}
+
+	if (clnt_data[playerid].p_key.KEY_S)
+	{
+		parray[playerid].cy += double(PLAYER_SPEED);
+	}
+
+	if (clnt_data[playerid].p_key.KEY_D)
+	{
+		parray[playerid].cx += double(PLAYER_SPEED);
+	}
+
+	/*
 	parray[playerid].cx += (double)(clnt_data[playerid].dx) * double(PLAYER_SPEED);
 	parray[playerid].cy += (double)(clnt_data[playerid].dy) * double(PLAYER_SPEED);
+	*/
 	for (int i = 0; i < 6; i++)
 	{
 		parray[playerid].rx[i] = sx / 4 * cos(seta + i) + parray[playerid].cx;
