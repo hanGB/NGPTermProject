@@ -1,10 +1,13 @@
 #pragma once
 
-//총알 장전
-void ReloadBullet(int* reload, double bullet[][4], int time);
+//플레이어 오브젝트 이동
+void move_player_object(int playerid);
 
 //검은벽 움직이지 못하게
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy);
+
+//총알 장전
+void ReloadBullet(int* reload, double bullet[][4], int time);
 
 //총알 이동
 void MoveBullet(RECT rectView, double bullet[][4], int speed, int* combo, BOOL multi, RECT* regg, RECT* eegg);

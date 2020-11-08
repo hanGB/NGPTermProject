@@ -11,12 +11,11 @@
 
 HINSTANCE g_hinst;
 LPCTSTR lpszClass = "Window Class Name";
-LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam);
 
-DWORD WINAPI ClientMain(LPVOID arg);
-DWORD WINAPI SendMsg(LPVOID arg);//쓰레드 전송함수
-DWORD WINAPI RecvMsg(LPVOID arg);//쓰레드 수신함수
+LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam);
 BOOL CALLBACK DialogProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+DWORD WINAPI ClientMain(LPVOID arg);//클라이언트 주 스레드
 
 SOCKET sock;
 
@@ -121,32 +120,6 @@ DWORD WINAPI ClientMain(LPVOID arg)
 	WaitForSingleObject(sendThread, INFINITE);//전송용 쓰레드가 중지될때까지 기다린다./
 	WaitForSingleObject(recvThread, INFINITE);//수신용 쓰레드가 중지될때까지 기다린다.
 
-}
-
-DWORD WINAPI SendMsg(LPVOID arg) {//전송용 쓰레드함수
-	while (1) {//반복
-
-		Sleep(10);
-		send(sock, (char*)&clnt_data, sizeof(CData), 0);
-	}
-	return 0;
-}
-
-DWORD WINAPI RecvMsg(LPVOID arg) {
-	int len;
-	while (1) {//반복
-
-		Sleep(10);
-		int GetSize;
-		char suBuffer[BUFSIZE];
-		GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
-		suBuffer[GetSize] = '\0';
-		player temp = *(player*)suBuffer;
-		parray[temp.nu] = temp;
-
-
-	}
-	return 0;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)

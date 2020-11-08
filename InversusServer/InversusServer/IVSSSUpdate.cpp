@@ -3,23 +3,21 @@
 #include "IVSSSGame.h"
 #include "IVSSSUpdate.h"
 
-void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
+extern player parray[2];
+
+extern CData clnt_data[MAX_CLNT];
+
+extern double sx, sy;
+extern double seta;
+
+void move_player_object(int playerid)
 {
-	if (*reload < time)
+	parray[playerid].cx += (double)(clnt_data[playerid].dx) * double(PLAYER_SPEED);
+	parray[playerid].cy += (double)(clnt_data[playerid].dy) * double(PLAYER_SPEED);
+	for (int i = 0; i < 6; i++)
 	{
-		(*reload)++;
-	}
-	else
-	{
-		for (int i = 0; i < 6; i++)
-		{
-			if (bullet[i][0] == 0)
-			{
-				bullet[i][0] = 1;
-				*reload = 0;
-				return;
-			}
-		}
+		parray[playerid].rx[i] = sx / 4 * cos(seta + i) + parray[playerid].cx;
+		parray[playerid].ry[i] = sy / 4 * sin(seta + i) + parray[playerid].cy;
 	}
 }
 
@@ -52,6 +50,27 @@ void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하
 		}
 	}
 }
+
+void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
+{
+	if (*reload < time)
+	{
+		(*reload)++;
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			if (bullet[i][0] == 0)
+			{
+				bullet[i][0] = 1;
+				*reload = 0;
+				return;
+			}
+		}
+	}
+}
+
 
 void MoveBullet(RECT rectView, double bullet[][4], int speed, int* combo, BOOL multi, RECT* regg, RECT* eegg)//총알 이동
 {
