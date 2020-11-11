@@ -5,7 +5,7 @@
 
 //#define SERVERIP "127.0.0.1"
 #define SERVERPORT 9000
-#define BUFSIZE 3000
+#define BUFSIZE 10000
 #define MAX_CLNT 256
 
 #define MAX_PLAYER 5 //최대 플레이어

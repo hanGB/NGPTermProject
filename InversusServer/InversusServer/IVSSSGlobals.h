@@ -3,7 +3,7 @@
 
 // 서버 클라이언트 통신 관련
 #define SERVERPORT 9000
-#define BUFSIZE 3000
+#define BUFSIZE 10000
 #define MAX_CLNT 256
 
 #define MAX_PLAYER 5 //최대 플레이어

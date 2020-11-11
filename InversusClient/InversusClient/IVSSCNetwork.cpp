@@ -13,6 +13,8 @@ extern GameObjects g_GameObjects;
 extern CData clnt_data;
 extern Clinfo clnt_info;
 
+extern bool g_bReadyToSend;
+
 int recvn(SOCKET s, char* buf, int len, int flags)
 {
 	int received;
@@ -32,9 +34,10 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 
 DWORD WINAPI SendMsg(LPVOID arg) {//전송용 쓰레드함수
 	while (1) {//반복
-
-		Sleep(10);
-		send(sock, (char*)&clnt_data, sizeof(CData), 0);
+		if (g_bReadyToSend) {
+			send(sock, (char*)&clnt_data, sizeof(CData), 0);
+			g_bReadyToSend = false;
+		}
 	}
 	return 0;
 }
@@ -43,14 +46,13 @@ DWORD WINAPI RecvMsg(LPVOID arg) {
 	int len;
 	while (1) {//반복
 
-		Sleep(10);
 		int GetSize;
 		char suBuffer[BUFSIZE];
 
 
 		//GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
 
-		recvn(sock, (char*)&g_GameObjects, sizeof(GameObjects), 0);
+		recv(sock, (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
 		memcpy(block, g_GameObjects.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
 		memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);

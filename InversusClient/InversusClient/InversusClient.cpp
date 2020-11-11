@@ -30,6 +30,8 @@ Clinfo clnt_info;
 int clientcount = 5;
 char serverip[32];
 
+bool g_bReadyToSend = false;
+
 HWND hWnd;
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
@@ -185,6 +187,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 
 		multireset(parray, rectView, sx, sy);
 		SetTimer(hWnd, 3, 16, NULL);
+		SetTimer(hWnd, 4, 33, NULL);
 		return 0;
 	case WM_PAINT:
 	{
@@ -340,6 +343,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			//60fps로 화면 다시 그리기
 			InvalidateRect(hWnd, NULL, FALSE);
 			break;
+		case 4:
+			//30fps로 데이터 전송
+			if (!g_bReadyToSend)
+				g_bReadyToSend = true;
 		}
 		break;
 

@@ -45,10 +45,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		int GetSize;
 		char suBuffer[BUFSIZE];
 		int playerid;
-		Sleep(10);
 		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer) - 1, 0);
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
-		if (GetSize >= 0 && GetSize < 3000) {
+		if (GetSize >= 0 && GetSize < BUFSIZE) {
 			suBuffer[GetSize] = '\0';
 			CData* tmp = (CData*)suBuffer;
 			playerid = tmp->ci;
@@ -68,7 +67,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 		}
 		ReleaseMutex(hMutex);//뮤텍스 중지
-		Sleep(10);
 	}
 
 	//이 줄을 실행한다는 것은 해당 클라이언트가 나갔다는 사실임 따라서 해당 클라이언트를 배열에서 제거해줘야함
