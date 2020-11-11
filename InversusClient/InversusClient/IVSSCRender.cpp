@@ -2,6 +2,8 @@
 #include "IVSSCGlobals.h"
 #include "IVSSCRender.h"
 
+extern CData clnt_data;
+
 void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//그라데이션
 {
 	int rs, gs, bs;
@@ -41,19 +43,14 @@ void Hcreateboad(int block[][20], double dx, double dy, HBRUSH hBrush, HBRUSH hB
 	{
 		for (int j = 0; j < 20; j++)
 		{
-			if (block[i][j] == 0)//흰색
+			if (block[i][j] == clnt_data.ci)//흰색
 			{
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
 			}
-			else if (block[i][j] == 1)//검정
+			else
 			{
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
-			}
-			else if (block[i][j] == 2)//회색
-			{
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush3);
 				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
 			}
 		}

@@ -101,6 +101,32 @@ DWORD WINAPI ServerMain(LPVOID arg)
 	//게임 오브젝트 초기화
 	ZeroMemory(&g_GameObjects, sizeof(GameObjects));
 
+	for (int y = 0; y < BOARD_SIZE; y++)
+	{
+		for (int x = 0; x < BOARD_SIZE; x++)
+		{
+			if (x < BOARD_SIZE / 2 && y < 8)
+			{
+				g_GameObjects.blocks[y][x] = 0;
+			}
+
+			if (x >= BOARD_SIZE / 2 && y < 8)
+			{
+				g_GameObjects.blocks[y][x] = 1;
+			}
+
+			if (x < BOARD_SIZE / 2 && y >= 8)
+			{
+				g_GameObjects.blocks[y][x] = 2;
+			}
+
+			if (x >= BOARD_SIZE / 2 && y >= 8)
+			{
+				g_GameObjects.blocks[y][x] = 3;
+			}
+		}
+	}
+
 	while (1)
 	{
 		addrlen = sizeof(clientaddr);
@@ -109,16 +135,26 @@ DWORD WINAPI ServerMain(LPVOID arg)
 
 		if (clientCount == 0)
 		{
-			parray[clientCount].cx = 400;
-			parray[clientCount].cy = 300;
-			parray[clientCount].enable = true;
+			parray[clientCount].cx = 100;
+			parray[clientCount].cy = 200;
 		}
-		else
+		else if (clientCount == 1)
 		{
-			parray[clientCount].cx = rand() % 1000;
-			parray[clientCount].cy = rand() % 700;
-			parray[clientCount].enable = true;
+			parray[clientCount].cx = 900;
+			parray[clientCount].cy = 200;
 		}
+		else if (clientCount == 2)
+		{
+			parray[clientCount].cx = 100;
+			parray[clientCount].cy = 600;
+		}
+		else if (clientCount == 3)
+		{
+			parray[clientCount].cx = 900;
+			parray[clientCount].cy = 600;
+		}
+		parray[clientCount].enable = true;
+
 		clnt_info[clientCount].ci = clientCount;
 		clientSocks[clientCount++] = client_sock;//클라이언트 소켓배열에 방금 가져온 소켓 주소를 전달
 
@@ -177,10 +213,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						if (parray[j].bullet[i][0] == 0)
 						{
 							parray[j].bullet[i][0] = 1;
-							reload = 0;
 						}
 					}
 				}
+				reload = 0;
 			}
 
 			if (ten < 10)//1초
