@@ -2,6 +2,7 @@
 #include "IVSSSGlobals.h"
 #include "IVSSSUpdate.h"
 #include "IVSSSNetwork.h"
+#include <ctime>
 
 extern int clientCount;
 extern SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
@@ -11,6 +12,8 @@ extern GameObjects g_GameObjects;
 extern player parray[MAX_PLAYER];
 
 extern CData clnt_data[MAX_CLNT];
+
+extern int g_prevTimeInMillisecond;
 
 int recvn(SOCKET s, char* buf, int len, int flags)
 {
@@ -54,7 +57,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			clnt_data[playerid] = *tmp;
 
-			move_player_object(playerid);
+			int currentTime = timeGetTime();
+
+			int elapsedTime = currentTime - g_prevTimeInMillisecond;
+
+			g_prevTimeInMillisecond = currentTime;
+			float elapsedTimeInSec = (float)elapsedTime / 1000.f;
+
+			move_player_object(elapsedTimeInSec);
 		
 			player temp = parray[playerid];
 			temp.nu = playerid;

@@ -37,6 +37,8 @@ RECT rectView;
 double sx, sy;
 double seta = 0;
 
+int g_prevTimeInMillisecond = 0;
+
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -100,6 +102,10 @@ DWORD WINAPI ServerMain(LPVOID arg)
 
 	//게임 오브젝트 초기화
 	ZeroMemory(&g_GameObjects, sizeof(GameObjects));
+
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		clnt_data[i].ci = NON_PLAYER;
+	}
 
 	for (int y = 0; y < BOARD_SIZE; y++)
 	{

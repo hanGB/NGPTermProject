@@ -46,7 +46,7 @@ typedef struct player {
 }player;
 
 
-typedef struct GameObjects {//서버로 받는 데이터
+typedef struct GameObjects {//서버에서 받는 데이터
 	player players[MAX_PLAYER];
 	int blocks[BOARD_SIZE][BOARD_SIZE];
 }GameObjects;

@@ -1,7 +1,7 @@
 #pragma once
 
 //플레이어 오브젝트 이동
-void move_player_object(int playerid);
+void move_player_object(float elapsedTimeInSec);
 
 //검은벽 움직이지 못하게
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy);

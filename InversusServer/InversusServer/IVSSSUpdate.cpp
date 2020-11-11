@@ -42,95 +42,99 @@ void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하
 	}
 }
 
-void move_player_object(int playerid)
+void move_player_object(float elapsedTimeInSec)
 {
-	if (clnt_data[playerid].p_key.KEY_W)
-	{
-		parray[playerid].cy -= double(PLAYER_SPEED);
-	}
-	
-	if (clnt_data[playerid].p_key.KEY_A)
-	{
-		parray[playerid].cx -= double(PLAYER_SPEED);
-	}
+	for (int id = 0; id < MAX_PLAYER; ++id) {
+		if (clnt_data[id].ci != NON_PLAYER) {
+			if (clnt_data[id].p_key.KEY_W)
+			{
+				parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+			}
 
-	if (clnt_data[playerid].p_key.KEY_S)
-	{
-		parray[playerid].cy += double(PLAYER_SPEED);
-	}
+			if (clnt_data[id].p_key.KEY_A)
+			{
+				parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+			}
 
-	if (clnt_data[playerid].p_key.KEY_D)
-	{
-		parray[playerid].cx += double(PLAYER_SPEED);
-	}
+			if (clnt_data[id].p_key.KEY_S)
+			{
+				parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+			}
 
-	int player_AA_xidex = int((parray[playerid].cx+sx/2) / (rectView.right/BOARD_SIZE));
-	int player_AA_yidex = int((parray[playerid].cy + sy / 2) / (rectView.bottom / 14));
+			if (clnt_data[id].p_key.KEY_D)
+			{
+				parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+			}
 
-	int player_BB_xidex = int((parray[playerid].cx - sx / 2) / (rectView.right / BOARD_SIZE));
-	int player_BB_yidex = int((parray[playerid].cy - sy / 2) / (rectView.bottom / 14));
+			int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
+			int player_AA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));
 
-	if (g_GameObjects.blocks[player_AA_yidex][player_AA_xidex] != playerid)
-	{
-		if (clnt_data[playerid].p_key.KEY_W)
-		{
-			parray[playerid].cy += double(PLAYER_SPEED);
+			int player_BB_xidex = int((parray[id].cx - sx / 2) / (rectView.right / BOARD_SIZE));
+			int player_BB_yidex = int((parray[id].cy - sy / 2) / (rectView.bottom / 14));
+
+			if (g_GameObjects.blocks[player_AA_yidex][player_AA_xidex] != id)
+			{
+				if (clnt_data[id].p_key.KEY_W)
+				{
+					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_A)
+				{
+					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_S)
+				{
+					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_D)
+				{
+					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+				} 
+			}
+			else if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != id)
+			{
+				if (clnt_data[id].p_key.KEY_W)
+				{
+					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_A)
+				{
+					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_S)
+				{
+					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+
+				if (clnt_data[id].p_key.KEY_D)
+				{
+					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+				}
+			}
+
+			if (rectView.top > parray[id].cy - sy / 2)
+				parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+
+			if (rectView.bottom < parray[id].cy + sy / 2)
+				parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+
+			if (rectView.left > parray[id].cx - sx / 2)
+				parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+
+			if (rectView.right < parray[id].cx + sx / 2)
+				parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+
+			for (int i = 0; i < 6; i++)
+			{
+				parray[id].rx[i] = sx / 4 * cos(seta + i) + parray[id].cx;
+				parray[id].ry[i] = sy / 4 * sin(seta + i) + parray[id].cy;
+			}
 		}
-
-		if (clnt_data[playerid].p_key.KEY_A)
-		{
-			parray[playerid].cx += double(PLAYER_SPEED);
-		}
-
-		if (clnt_data[playerid].p_key.KEY_S)
-		{
-			parray[playerid].cy -= double(PLAYER_SPEED);
-		}
-
-		if (clnt_data[playerid].p_key.KEY_D)
-		{
-			parray[playerid].cx -= double(PLAYER_SPEED);
-		}
-	}
-	else if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != playerid)
-	{
-		if (clnt_data[playerid].p_key.KEY_W)
-		{
-			parray[playerid].cy += double(PLAYER_SPEED);
-		}
-
-		if (clnt_data[playerid].p_key.KEY_A)
-		{
-			parray[playerid].cx += double(PLAYER_SPEED);
-		}
-
-		if (clnt_data[playerid].p_key.KEY_S)
-		{
-			parray[playerid].cy -= double(PLAYER_SPEED);
-		}
-
-		if (clnt_data[playerid].p_key.KEY_D)
-		{
-			parray[playerid].cx -= double(PLAYER_SPEED);
-		}
-	}
-
-	if (rectView.top > parray[playerid].cy - sy / 2)
-		parray[playerid].cy += double(PLAYER_SPEED);;
-
-	if (rectView.bottom < parray[playerid].cy + sy / 2)
-		parray[playerid].cy -= double(PLAYER_SPEED);;
-
-	if (rectView.left > parray[playerid].cx - sx / 2)
-		parray[playerid].cx += double(PLAYER_SPEED);;
-
-	if (rectView.right < parray[playerid].cx + sx / 2)
-		parray[playerid].cx -= double(PLAYER_SPEED);;
-
-	for (int i = 0; i < 6; i++)
-	{
-		parray[playerid].rx[i] = sx / 4 * cos(seta + i) + parray[playerid].cx;
-		parray[playerid].ry[i] = sy / 4 * sin(seta + i) + parray[playerid].cy;
 	}
 }
 
