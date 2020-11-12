@@ -259,7 +259,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						else if (parray[j].bullet[i][0] == 3)
 						{
 							//ÃÑ¾Ë ½ð°Å
-							Hshotbullet(parray[0].bullet, parray[0].regg, hMemDC, i, 0, ecolor, 0);
+							Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, 0);
 							//ÃÑ¾Ë-ºí·Ï Ãæµ¹
 							//Hcolblock(sx, sy, parray[0].regg, block, &score, &combo, parray[0].bullet, i, 0, 0);
 							//ÃÑ¾Ë-Àû Ãæµ¹
@@ -314,8 +314,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			}
 
 			{
-				MoveBullet(rectView, parray[0].bullet, 50, &combo, multi, parray[0].regg, parray[1].regg);
-				MoveBullet(rectView, parray[1].bullet, 50, &combo, multi, parray[1].regg, parray[0].regg);
 				Tdetaheffect(effect);
 
 				if (death == false)
@@ -393,21 +391,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		//MessageBox(NULL, "test", "test", MB_OK);
 
 	{
-		if (wParam == VK_NUMPAD5)
+		if (wParam == VK_UP)
 		{
-			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 2);
+			clnt_data.p_key.ARROW_UP = true;
 		}
-		if (wParam == VK_NUMPAD2)
+		if (wParam == VK_DOWN)
 		{
-			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 3);
+			clnt_data.p_key.ARROW_DOWN = true;
 		}
-		if (wParam == VK_NUMPAD1)
+		if (wParam == VK_LEFT)
 		{
-			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 1);
+			clnt_data.p_key.ARROW_LEFT = true;
 		}
-		if (wParam == VK_NUMPAD3)
+		if (wParam == VK_RIGHT)
 		{
-			Kshotbullet(parray[1].bullet, parray[1].cx, parray[1].cy, 0);
+			clnt_data.p_key.ARROW_RIGHT = true;
 		}
 
 		if (death == true)
@@ -449,6 +447,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		if (wParam == 'a' || wParam == 'A')
 		{
 			clnt_data.p_key.KEY_A = false;
+		}
+		if (wParam == VK_UP)
+		{
+			clnt_data.p_key.ARROW_UP = false;
+		}
+		if (wParam == VK_DOWN)
+		{
+			clnt_data.p_key.ARROW_DOWN = false;
+		}
+		if (wParam == VK_LEFT)
+		{
+			clnt_data.p_key.ARROW_LEFT = false;
+		}
+		if (wParam == VK_RIGHT)
+		{
+			clnt_data.p_key.ARROW_RIGHT = false;
 		}
 		break;
 	case WM_COMMAND:

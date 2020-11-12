@@ -3,6 +3,10 @@
 //플레이어 오브젝트 이동
 void move_player_object(float elapsedTimeInSec);
 
+//총알 오브젝트 이동
+void move_bullet_object(float elapsedTimeInSec);
+
+void check_lauched_bullet();
 //검은벽 움직이지 못하게
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy);
 
@@ -31,7 +35,7 @@ void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double 
 	BOOL death, double bullet[][4], HBRUSH oldBrush, HBRUSH hBrush, HBRUSH eBrush, HDC hMemDC);
 
 //방향키 총알 발사
-void Kshotbullet(double bullet[][4], double cx, double cy, int check);
+void Kshotbullet(int id, int d);
 
 //죽을때 이펙트 계산
 void DeathEffect(double effect[][17], double x, double y, int dx, int i);

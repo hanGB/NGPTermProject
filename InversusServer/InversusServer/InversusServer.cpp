@@ -206,9 +206,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				seta = 0;
 			}
 
-			if (reload < 20)
+			if (reload < 30)
 			{
-				(reload)++;
+				reload++;
 			}
 			else
 			{
@@ -219,6 +219,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						if (parray[j].bullet[i][0] == 0)
 						{
 							parray[j].bullet[i][0] = 1;
+							break;
 						}
 					}
 				}

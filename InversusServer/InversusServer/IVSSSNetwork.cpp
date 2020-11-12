@@ -65,7 +65,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			float elapsedTimeInSec = (float)elapsedTime / 1000.f;
 
 			move_player_object(elapsedTimeInSec);
-		
+			check_lauched_bullet();
+			move_bullet_object(elapsedTimeInSec);
+
 			player temp = parray[playerid];
 			temp.nu = playerid;
 

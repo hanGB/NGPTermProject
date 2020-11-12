@@ -50,6 +50,7 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 
 // 게임 로직 관련
 #define PLAYER_SPEED 50
+#define BULLET_SPEED 300
 
 #define LIMIT_ENEMY 20
 #define LIMIT_SGUN 100

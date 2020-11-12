@@ -117,7 +117,7 @@ void move_player_object(float elapsedTimeInSec)
 				}
 			}
 
-			if (rectView.top > parray[id].cy - sy / 2)
+			if (rectView.top+100 > parray[id].cy - sy / 2)
 				parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
 
 			if (rectView.bottom < parray[id].cy + sy / 2)
@@ -133,6 +133,135 @@ void move_player_object(float elapsedTimeInSec)
 			{
 				parray[id].rx[i] = sx / 4 * cos(seta + i) + parray[id].cx;
 				parray[id].ry[i] = sy / 4 * sin(seta + i) + parray[id].cy;
+			}
+		}
+	}
+}
+/*
+bullet[i][0] : i번째 총알 상태 (0은 총알 없음 1은 총알 있음 2은 특수총알 3은 총알 발사중) 
+bullet[i][1] : i번째 총알 x좌표
+bullet[i][2] : i번째 총알 y좌표
+bullet[i][3] : i번째 방향
+*/
+void check_lauched_bullet()
+{
+	for (int id = 0; id < MAX_PLAYER; ++id) {
+		if (clnt_data[id].ci != NON_PLAYER) {
+			if (clnt_data[id].p_key.ARROW_UP)
+			{
+				Kshotbullet(id, 4);
+				clnt_data[id].p_key.ARROW_UP = false;
+			}
+
+			if (clnt_data[id].p_key.ARROW_DOWN)
+			{
+				Kshotbullet(id, 3);
+				clnt_data[id].p_key.ARROW_DOWN = false;
+			}
+
+			if (clnt_data[id].p_key.ARROW_LEFT)
+			{
+				Kshotbullet(id, 1);
+				clnt_data[id].p_key.ARROW_LEFT = false;
+			}
+
+			if (clnt_data[id].p_key.ARROW_RIGHT)
+			{
+				Kshotbullet(id, 0);
+				clnt_data[id].p_key.ARROW_RIGHT = false;
+			}
+		}
+	}
+}
+
+void Kshotbullet(int id, int d)//id: 플레이어 번호, d: 방향
+{
+	for (int i = 0; i < 6; i++)
+	{
+		if (parray[id].bullet[i][0] == 1 || parray[id].bullet[i][0] == 2)
+		{
+			if (parray[id].bullet[i][0] == 1)
+				parray[id].bullet[i][0] = 3;
+			else
+				parray[id].bullet[i][0] = 4;
+
+			if (d == 0)
+			{
+				parray[id].bullet[i][1] = parray[id].cx + 50;
+				parray[id].bullet[i][2] = parray[id].cy;
+			}
+			else if (d == 1)
+			{
+				parray[id].bullet[i][1] = parray[id].cx - 50;
+				parray[id].bullet[i][2] = parray[id].cy;
+			}
+			else if (d == 2)
+			{
+				parray[id].bullet[i][1] = parray[id].cx;
+				parray[id].bullet[i][2] = parray[id].cy - 50;
+			}
+			else if (d == 3)
+			{
+				parray[id].bullet[i][1] = parray[id].cx;
+				parray[id].bullet[i][2] = parray[id].cy + 50;
+			}
+			parray[id].bullet[i][3] = d;
+			break;
+		}
+	}
+}
+
+void move_bullet_object(float elapsedTimeInSec)
+{
+	for (int id = 0; id < MAX_PLAYER; ++id) {
+		for (int i = 0; i < 6; i++)
+		{
+			if (parray[id].bullet[i][0] == 3 || parray[id].bullet[i][0] == 4)
+			{
+				if (parray[id].bullet[i][3] == 0) // ->
+				{
+					if (parray[id].bullet[i][1] - 50 < rectView.right)
+					{
+						parray[id].bullet[i][1] += double(BULLET_SPEED) * elapsedTimeInSec;
+					}
+					else
+					{
+						parray[id].bullet[i][0] = 0;
+					}
+				}
+				else if (parray[id].bullet[i][3] == 1)// <-
+				{
+					if (parray[id].bullet[i][1] + 50 > rectView.left)
+					{
+						parray[id].bullet[i][1] -= double(BULLET_SPEED) * elapsedTimeInSec;
+					}
+					else
+					{
+						parray[id].bullet[i][0] = 0;
+					}
+				}
+				else if (parray[id].bullet[i][3] == 2)// 위
+				{
+					if (parray[id].bullet[i][2] - 50 > rectView.top)
+					{
+						parray[id].bullet[i][2] -= double(BULLET_SPEED) * elapsedTimeInSec;
+					}
+					else
+					{
+						parray[id].bullet[i][0] = 0;
+					}
+				}
+				else if (parray[id].bullet[i][3] == 3)// 아래
+				{
+					if (parray[id].bullet[i][2] + 50 < rectView.bottom)
+					{
+						parray[id].bullet[i][2] += double(BULLET_SPEED) * elapsedTimeInSec;
+					}
+					else
+					{
+						parray[id].bullet[i][0] = 0;
+					}
+				}
 			}
 		}
 	}
@@ -368,42 +497,6 @@ void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double 
 	ry[i] = dy / 3 * sin(seta + i) + cy;
 }
 
-void Kshotbullet(double bullet[][4], double cx, double cy, int check)//방향키 총알 발사
-{
-	for (int i = 0; i < 6; i++)
-	{
-		if (bullet[i][0] == 1 || bullet[i][0] == 2)
-		{
-			if (bullet[i][0] == 1)
-				bullet[i][0] = 3;
-			else
-				bullet[i][0] = 4;
-
-			if (check == 0)
-			{
-				bullet[i][1] = cx + 50;
-				bullet[i][2] = cy;
-			}
-			else if (check == 1)
-			{
-				bullet[i][1] = cx - 50;
-				bullet[i][2] = cy;
-			}
-			else if (check == 2)
-			{
-				bullet[i][1] = cx;
-				bullet[i][2] = cy - 50;
-			}
-			else if (check == 3)
-			{
-				bullet[i][1] = cx;
-				bullet[i][2] = cy + 50;
-			}
-			bullet[i][3] = check;
-			break;
-		}
-	}
-}
 
 void DeathEffect(double effect[][17], double x, double y, int dx, int i)//죽을때 이펙트 계산
 {
