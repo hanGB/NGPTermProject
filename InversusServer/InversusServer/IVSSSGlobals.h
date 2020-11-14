@@ -31,6 +31,7 @@ typedef struct CData {//클라이언트로부터 받은 데이터
 	int ci;
 	int dx, dy; //방향
 	KeyInputs p_key;
+	float coolTime = 0; //총알 연속 발사 쿨타임
 }CData;
 
 typedef struct player {
@@ -40,6 +41,7 @@ typedef struct player {
 	double cx, cy;
 	double bullet[6][4] = { 0, };
 	RECT regg[6];
+	float coolTime = 0; //총알 연속 발사 쿨타임
 }player;
 
 typedef struct GameObjects {//클라이언트로 보낼 데이터
@@ -59,3 +61,7 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 #define LIMIT_EFFECT 2
 
 #define NON_PLAYER -1
+
+#define BULLET_COOL_TIME 0.3
+
+#define BLOCK_SIZE 50

@@ -56,6 +56,7 @@ DWORD WINAPI RecvMsg(LPVOID arg) {
 
 		memcpy(block, g_GameObjects.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
 		memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
+		clnt_data.coolTime = g_GameObjects.players[clnt_data.ci].coolTime;
 
 		/*if (GetSize >= 0 && GetSize < 3000) {
 			suBuffer[GetSize] = '\0';

@@ -2,6 +2,7 @@
 #include "IVSSSGlobals.h"
 #include "IVSSSGame.h"
 #include "IVSSSUpdate.h"
+#include <iostream>
 
 extern player parray[MAX_PLAYER];
 
@@ -11,6 +12,15 @@ extern RECT rectView;
 
 extern double sx, sy;
 extern double seta;
+
+void Update(float elapsedTimeInSec)
+{
+	move_player_object(elapsedTimeInSec);
+	check_lauched_bullet(elapsedTimeInSec);
+	move_bullet_object(elapsedTimeInSec);
+	CollisionBetweenBulletAndBlock();
+}
+
 
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하게
 {
@@ -143,33 +153,50 @@ bullet[i][1] : i번째 총알 x좌표
 bullet[i][2] : i번째 총알 y좌표
 bullet[i][3] : i번째 방향
 */
-void check_lauched_bullet()
+void check_lauched_bullet(float elapsedTimeInSec)
 {
 	for (int id = 0; id < MAX_PLAYER; ++id) {
 		if (clnt_data[id].ci != NON_PLAYER) {
 			if (clnt_data[id].p_key.ARROW_UP)
 			{
-				Kshotbullet(id, 4);
-				clnt_data[id].p_key.ARROW_UP = false;
+				if (clnt_data[id].coolTime <= 0) {
+					Kshotbullet(id, 4);
+					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				}
+				else
+					clnt_data[id].coolTime -= elapsedTimeInSec;
 			}
 
 			if (clnt_data[id].p_key.ARROW_DOWN)
 			{
-				Kshotbullet(id, 3);
-				clnt_data[id].p_key.ARROW_DOWN = false;
+				if (clnt_data[id].coolTime <= 0) {
+					Kshotbullet(id, 3);
+					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				}
+				else
+					clnt_data[id].coolTime -= elapsedTimeInSec;
 			}
 
 			if (clnt_data[id].p_key.ARROW_LEFT)
 			{
-				Kshotbullet(id, 1);
-				clnt_data[id].p_key.ARROW_LEFT = false;
+				if (clnt_data[id].coolTime <= 0) {
+					Kshotbullet(id, 1);
+					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				}
+				else
+					clnt_data[id].coolTime -= elapsedTimeInSec;
 			}
 
 			if (clnt_data[id].p_key.ARROW_RIGHT)
 			{
-				Kshotbullet(id, 0);
-				clnt_data[id].p_key.ARROW_RIGHT = false;
+				if (clnt_data[id].coolTime <= 0) {
+					Kshotbullet(id, 0);
+					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				}
+				else
+					clnt_data[id].coolTime -= elapsedTimeInSec;
 			}
+			parray[id].coolTime = clnt_data[id].coolTime;
 		}
 	}
 }
@@ -287,131 +314,32 @@ void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
 	}
 }
 
-
-void MoveBullet(RECT rectView, double bullet[][4], int speed, int* combo, BOOL multi, RECT* regg, RECT* eegg)//총알 이동
-{
-	for (int i = 0; i < 6; i++)
-	{
-		if (bullet[i][0] == 3 || bullet[i][0] == 4)
-		{
-			if (bullet[i][3] == 0) // ->
-			{
-				if (bullet[i][1] - 50 < rectView.right)
-				{
-					bullet[i][1] += speed;
-				}
-				else
-				{
-					bullet[i][0] = 0;
-					*combo = 0;
-				}
-			}
-			else if (bullet[i][3] == 1)// <-
-			{
-				if (bullet[i][1] + 50 > rectView.left)
-				{
-					bullet[i][1] -= speed;
-				}
-				else
-				{
-					bullet[i][0] = 0;
-					*combo = 0;
-				}
-			}
-			else if (bullet[i][3] == 2)// 위
-			{
-				if (bullet[i][2] - 50 > rectView.top)
-				{
-					bullet[i][2] -= speed;
-				}
-				else
-				{
-					bullet[i][0] = 0;
-					*combo = 0;
-				}
-			}
-			else if (bullet[i][3] == 3)// 아래
-			{
-				if (bullet[i][2] + 50 < rectView.bottom)
-				{
-					bullet[i][2] += speed;
-				}
-				else
-				{
-					bullet[i][0] = 0;
-					*combo = 0;
-				}
-			}
-
-			if (multi == true)
-			{
-				for (int j = 0; j < 6; j++)
-				{
-					if (bullet[j][0] == 3 || bullet[j][0] == 4)
-					{
-						RECT temp;
-						if (IntersectRect(&temp, &eegg[j], &regg[i]))
-						{
-							bullet[i][0] = 0;
-							bullet[j][0] = 0;
-							*combo = 0;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-void Hcolblock(double dx, double dy, RECT* regg, int block[][20], int* score, int* combo, double bullet[][4], int i, int check, int ch)
+void CollisionBetweenBulletAndBlock()
 {
 	//총알-블록 충돌
-	for (int y = 0; y < 20; y++)
-	{
-		for (int x = 0; x < 20; x++)
+	for (int id = 0; id < MAX_PLAYER; ++id) {
+		for (int i = 0; i < 6; i++)
 		{
-			RECT rec = { dx * x, dy * y, dx * (x + 1), dy * (y + 1) };
-			RECT temp;
-			if (check == 0)
-			{
-				if (IntersectRect(&temp, &regg[i], &rec))
+			if (parray[id].bullet[i][0] == 3) {
+				int bulletX = parray[id].bullet[i][1];
+				int bulletY = parray[id].bullet[i][2];
+
+				for (int y = 0; y < 20; y++)
 				{
-					if (ch == 0)
+					for (int x = 0; x < 20; x++)
 					{
-						if (block[y][x] == 1)
-						{
-							block[y][x] = 0;
-							*score += 5;
+						RECT rec = { 50 * x, 50 * y, 50 * (x + 1), 50 * (y + 1) };
+						RECT temp;
+						RECT regg;
+
+						regg.left = bulletX - 5;
+						regg.top = bulletY - 5;
+						regg.right = bulletX + 5;
+						regg.bottom = bulletY + 5;
+
+						if (IntersectRect(&temp, &regg, &rec)) {
+							g_GameObjects.blocks[y][x] = id;
 						}
-						else if (block[y][x] == 2)
-						{
-							bullet[i][0] = 0;
-							*combo = 0;
-						}
-					}
-					else
-					{
-						if (block[y][x] == 0)
-						{
-							block[y][x] = 1;
-							*score += 5;
-						}
-						else if (block[y][x] == 2)
-						{
-							bullet[i][0] = 0;
-							*combo = 0;
-						}
-					}
-				}
-			}
-			else
-			{
-				if (IntersectRect(&temp, &regg[i * 3], &rec) || IntersectRect(&temp, &regg[i * 3 + 1], &rec) || IntersectRect(&temp, &regg[i * 3 + 2], &rec))
-				{
-					if (block[y][x] == 1)
-					{
-						block[y][x] = 0;
-						*score += 5;
 					}
 				}
 			}

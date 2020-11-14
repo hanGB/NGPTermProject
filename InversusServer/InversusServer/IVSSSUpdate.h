@@ -1,24 +1,25 @@
 #pragma once
 
+//게임 오브젝트 업데이트 함수
+void Update(float elapsedTimeInSec);
+
 //플레이어 오브젝트 이동
 void move_player_object(float elapsedTimeInSec);
 
 //총알 오브젝트 이동
 void move_bullet_object(float elapsedTimeInSec);
 
-void check_lauched_bullet();
+//총알 발사 체크 및 총알 발사 쿨타임 저장
+void check_lauched_bullet(float elapsedTimeInSec);
+
 //검은벽 움직이지 못하게
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy);
 
 //총알 장전
 void ReloadBullet(int* reload, double bullet[][4], int time);
 
-//총알 이동
-void MoveBullet(RECT rectView, double bullet[][4], int speed, int* combo, BOOL multi, RECT* regg, RECT* eegg);
-
 //총알-블록 충돌
-void Hcolblock(double dx, double dy, RECT* regg, int block[][20], 
-	int* score, int* combo, double bullet[][4], int i, int check, int ch);
+void CollisionBetweenBulletAndBlock();
 
 //일대일 총알 맞음
 void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double effect[][17], 

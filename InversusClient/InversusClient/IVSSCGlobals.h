@@ -34,6 +34,7 @@ typedef struct CData {//서버로 보내는 데이터
 	int ci;
 	int dx = 0, dy = 0; //방향
 	KeyInputs p_key;
+	float coolTime = 0; //총알 연속 발사 쿨타임
 }CData;
 
 typedef struct player {
@@ -43,6 +44,7 @@ typedef struct player {
 	double cx, cy;
 	double bullet[6][4] = { 0 };
 	RECT regg[6];
+	float coolTime = 0; //총알 연속 발사 쿨타임
 }player;
 
 

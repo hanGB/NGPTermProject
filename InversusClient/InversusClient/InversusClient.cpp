@@ -350,40 +350,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 
 	case WM_CHAR:
 		
-		if (wParam == 'w' || wParam == 'W')
-		{
-			clnt_data.p_key.KEY_W = true;
-		}
-		else if (wParam == 's' || wParam == 'S')
-		{
-			clnt_data.p_key.KEY_S = true;
-		}
-		else if (wParam == 'd' || wParam == 'D')
-		{
-			clnt_data.p_key.KEY_D = true;
-		}
-		else if (wParam == 'a' || wParam == 'A')
-		{
-			clnt_data.p_key.KEY_A = true;
-		}
-
 		
-		if (wParam == 'u' || wParam == 'U')
-		{
-			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 2);
-		}
-		else if (wParam == 'j' || wParam == 'J')
-		{
-			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 3);
-		}
-		else if (wParam == 'h' || wParam == 'H')
-		{
-			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 1);
-		}
-		else if (wParam == 'k' || wParam == 'K')
-		{
-			Kshotbullet(parray[0].bullet, parray[0].cx, parray[0].cy, 0);
-		}
 		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
 
@@ -391,6 +358,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		//MessageBox(NULL, "test", "test", MB_OK);
 
 	{
+		if (wParam == 'w' || wParam == 'W')
+		{
+			clnt_data.p_key.KEY_W = true;
+		}
+		if (wParam == 's' || wParam == 'S')
+		{
+			clnt_data.p_key.KEY_S = true;
+		}
+		if (wParam == 'd' || wParam == 'D')
+		{
+			clnt_data.p_key.KEY_D = true;
+		}
+		if (wParam == 'a' || wParam == 'A')
+		{
+			clnt_data.p_key.KEY_A = true;
+		}
 		if (wParam == VK_UP)
 		{
 			clnt_data.p_key.ARROW_UP = true;
@@ -451,18 +434,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		if (wParam == VK_UP)
 		{
 			clnt_data.p_key.ARROW_UP = false;
+			clnt_data.coolTime = 0;
 		}
 		if (wParam == VK_DOWN)
 		{
 			clnt_data.p_key.ARROW_DOWN = false;
+			clnt_data.coolTime = 0;
 		}
 		if (wParam == VK_LEFT)
 		{
 			clnt_data.p_key.ARROW_LEFT = false;
+			clnt_data.coolTime = 0;
 		}
 		if (wParam == VK_RIGHT)
 		{
 			clnt_data.p_key.ARROW_RIGHT = false;
+			clnt_data.coolTime = 0;
 		}
 		break;
 	case WM_COMMAND:

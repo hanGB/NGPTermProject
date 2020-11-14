@@ -63,15 +63,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			g_prevTimeInMillisecond = currentTime;
 			float elapsedTimeInSec = (float)elapsedTime / 1000.f;
+			
+			Update(elapsedTimeInSec);
 
-			move_player_object(elapsedTimeInSec);
-			check_lauched_bullet();
-			move_bullet_object(elapsedTimeInSec);
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				player temp = parray[playerid];
+				temp.nu = playerid;
 
-			player temp = parray[playerid];
-			temp.nu = playerid;
-
-			g_GameObjects.players[playerid] = temp;
+				g_GameObjects.players[playerid] = temp;
+			}
 		}
 		for (int i = 0; i < clientCount; i++)
 		{
