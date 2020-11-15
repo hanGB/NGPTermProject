@@ -226,6 +226,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				reload = 0;
 			}
 
+			Tdetaheffect();
+
 			if (ten < 10)//1ÃÊ
 			{
 				ten++;

@@ -41,6 +41,7 @@ typedef struct player {
 	double cx, cy;
 	double bullet[6][4] = { 0, };
 	RECT regg[6];
+	double d_effect[17] = { 0, };
 	float coolTime = 0; //총알 연속 발사 쿨타임
 }player;
 

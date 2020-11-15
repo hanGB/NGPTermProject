@@ -39,10 +39,10 @@ void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double 
 void Kshotbullet(int id, int d);
 
 //죽을때 이펙트 계산
-void DeathEffect(double effect[][17], double x, double y, int dx, int i);
+void DeathEffect(int id);
 
 //데스이펙타임
-void Tdetaheffect(double effect[][17]);
+void Tdetaheffect();
 
 //리스폰 할때 이펙트 계산
 void RespawnEffect(double reffect[][4], double x, double y, int nu);

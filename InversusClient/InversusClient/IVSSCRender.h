@@ -19,7 +19,7 @@ void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRU
 	HPEN cPen, HPEN ePen, HDC hMemDC, double dx, double dy, double reffect[][4]);
 
 //데스이펙트
-void Hdeatheffect(double effect[][17], HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC);
+void Hdeatheffect(HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC);
 
 //상단 스코어 보드판
 void Hscorebord(HBRUSH oldBrush, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC, RECT rectView, 

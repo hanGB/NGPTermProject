@@ -269,7 +269,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				}
 			}
 			//ªÁ∏¡¿Ã∆Â∆Æ
-			Hdeatheffect(effect, oldBrush, hBrush2, eBrush, hMemDC);
+			Hdeatheffect(oldBrush, hBrush2, eBrush, hMemDC);
 
 			SetBkColor(hMemDC, RGB(255, 255, 255));
 			RECT aect = { rectView.left,rectView.bottom * 1 / 4,rectView.right,rectView.bottom * 3 / 4 };
@@ -314,7 +314,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			}
 
 			{
-				Tdetaheffect(effect);
 
 				if (death == false)
 				{

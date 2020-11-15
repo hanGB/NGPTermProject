@@ -160,7 +160,7 @@ void check_lauched_bullet(float elapsedTimeInSec)
 			if (clnt_data[id].p_key.ARROW_UP)
 			{
 				if (clnt_data[id].coolTime <= 0) {
-					Kshotbullet(id, 4);
+					Kshotbullet(id, 2);
 					clnt_data[id].coolTime = BULLET_COOL_TIME;
 				}
 				else
@@ -316,7 +316,6 @@ void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
 
 void CollisionBetweenBulletAndBlock()
 {
-	//총알-블록 충돌
 	for (int id = 0; id < MAX_PLAYER; ++id) {
 		for (int i = 0; i < 6; i++)
 		{
@@ -324,21 +323,37 @@ void CollisionBetweenBulletAndBlock()
 				int bulletX = parray[id].bullet[i][1];
 				int bulletY = parray[id].bullet[i][2];
 
+				RECT regg;
+				regg.left = bulletX - 5;
+				regg.top = bulletY - 5;
+				regg.right = bulletX + 5;
+				regg.bottom = bulletY + 5;
+
+				//총알-블록 충돌
 				for (int y = 0; y < 20; y++)
 				{
 					for (int x = 0; x < 20; x++)
 					{
 						RECT rec = { 50 * x, 50 * y, 50 * (x + 1), 50 * (y + 1) };
 						RECT temp;
-						RECT regg;
-
-						regg.left = bulletX - 5;
-						regg.top = bulletY - 5;
-						regg.right = bulletX + 5;
-						regg.bottom = bulletY + 5;
 
 						if (IntersectRect(&temp, &regg, &rec)) {
 							g_GameObjects.blocks[y][x] = id;
+						}
+					}
+				}
+
+				//총알-플레이어 충돌
+				for (int deathid = 0; deathid < MAX_PLAYER; ++deathid)
+				{
+					if (parray[deathid].enable == true && deathid != id)
+					{
+						RECT rec = { parray[deathid].cx - sx/2, parray[deathid].cy - sy / 2, parray[deathid].cx + sx / 2, parray[deathid].cy + sy / 2 };
+						RECT temp;
+
+						if (IntersectRect(&temp, &regg, &rec)) {
+							parray[deathid].enable = false;
+							DeathEffect(deathid);
 						}
 					}
 				}
@@ -347,6 +362,44 @@ void CollisionBetweenBulletAndBlock()
 	}
 }
 
+void DeathEffect(int id)//죽을때 이펙트 계산
+{
+	//0-시간 1-x1 2-y1 3-x2 4-y2 5-x3 6-y3 7-x4 8-y4
+	//9- 1지름 10-2지름 11-3지름 12-4지름 13~16+/-
+	for (int j = 1; j < 8; j += 2)
+		parray[id].d_effect[j] = parray[id].cx + rand() % 50 * cos(rand() % 3);
+	for (int j = 2; j < 9; j += 2)
+		parray[id].d_effect[j] = parray[id].cy + rand() % 50 * sin(rand() % 3);
+	for (int j = 9; j < 13; j++)
+		parray[id].d_effect[j] = rand() % (int)(sx / 2) + 10;
+	for (int j = 13; j < 17; j++)
+		parray[id].d_effect[j] = rand() % 2;
+	parray[id].d_effect[0] = 5;
+}
+
+void Tdetaheffect()//데스이펙타임
+{
+	for (int id = 0; id < MAX_PLAYER + 1; id++)
+	{
+		if (parray[id].d_effect[0] > 0)
+		{
+			for (int j = 13; j < 17; j++)
+			{
+				if (parray[id].d_effect[j] == 0)
+				{
+					parray[id].d_effect[j - 4] -= 5;
+				}
+				else
+				{
+					parray[id].d_effect[j - 4] += 5;
+				}
+			}
+			parray[id].d_effect[0]--;
+		}
+	}
+}
+
+/*
 void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double effect[][17], int i, HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd, BOOL* death)//일대일 총알 맞음
 {
 	RECT rec = { cx - dx / 2, cy - dy / 2, cx + dx / 2, cy + dy / 2 };
@@ -358,6 +411,7 @@ void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double e
 		*death = true;
 	}
 }
+*/
 
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
 {
@@ -425,51 +479,12 @@ void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double 
 	ry[i] = dy / 3 * sin(seta + i) + cy;
 }
 
-
-void DeathEffect(double effect[][17], double x, double y, int dx, int i)//죽을때 이펙트 계산
-{
-	//0-시간 1-x1 2-y1 3-x2 4-y2 5-x3 6-y3 7-x4 8-y4
-	//9- 1지름 10-2지름 11-3지름 12-4지름 13~16+/-
-	for (int j = 1; j < 8; j += 2)
-		effect[i][j] = x + rand() % 50 * cos(rand() % 3);
-	for (int j = 2; j < 9; j += 2)
-		effect[i][j] = y + rand() % 50 * sin(rand() % 3);
-	for (int j = 9; j < 13; j++)
-		effect[i][j] = rand() % (dx / 2) + 10;
-	for (int j = 13; j < 17; j++)
-		effect[i][j] = rand() % 2;
-	effect[i][0] = 5;
-}
-
 void RespawnEffect(double reffect[][4], double x, double y, int nu)//리스폰 할때 이펙트 계산
 {
 	reffect[0][0] = 30;
 	reffect[0][1] = x;
 	reffect[0][2] = y;
 	reffect[0][3] = nu;
-}
-
-
-void Tdetaheffect(double effect[][17])//데스이펙타임
-{
-	for (int i = 0; i < LIMIT_ENEMY + 1; i++)
-	{
-		if (effect[i][0] > 0)
-		{
-			for (int j = 13; j < 17; j++)
-			{
-				if (effect[i][j] == 0)
-				{
-					effect[i][j - 4] -= 5;
-				}
-				else
-				{
-					effect[i][j - 4] += 5;
-				}
-			}
-			effect[i][0]--;
-		}
-	}
 }
 
 void Trespawneffect(double reffect[][4], int gametime, BOOL* death, double enemy[][5])//리스폰이펙타임 

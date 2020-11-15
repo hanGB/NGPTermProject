@@ -3,6 +3,7 @@
 #include "IVSSCRender.h"
 
 extern CData clnt_data;
+extern player parray[MAX_PLAYER];
 
 void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//그라데이션
 {
@@ -107,20 +108,20 @@ void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRU
 	}
 }
 
-void Hdeatheffect(double effect[][17], HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC)//데스이펙트
+void Hdeatheffect(HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC)//데스이펙트
 {
-	for (int i = 0; i < LIMIT_ENEMY + 1; i++)
+	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
-		if (i == 0)
+		if (id == clnt_data.ci)
 			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
 		else
 			oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-		if (effect[i][0] > 0)
+		if (parray[id].d_effect[0] > 0)
 		{
-			Ellipse(hMemDC, effect[i][1] - effect[i][9], effect[i][2] - effect[i][9], effect[i][1] + effect[i][9], effect[i][2] + effect[i][9]);
-			Ellipse(hMemDC, effect[i][3] - effect[i][10], effect[i][4] - effect[i][10], effect[i][3] + effect[i][10], effect[i][4] + effect[i][10]);
-			Ellipse(hMemDC, effect[i][5] - effect[i][11], effect[i][6] - effect[i][11], effect[i][5] + effect[i][11], effect[i][6] + effect[i][11]);
-			Ellipse(hMemDC, effect[i][7] - effect[i][12], effect[i][8] - effect[i][12], effect[i][7] + effect[i][12], effect[i][8] + effect[i][12]);
+			Ellipse(hMemDC, parray[id].d_effect[1] - parray[id].d_effect[9], parray[id].d_effect[2] - parray[id].d_effect[9], parray[id].d_effect[1] + parray[id].d_effect[9], parray[id].d_effect[2] + parray[id].d_effect[9]);
+			Ellipse(hMemDC, parray[id].d_effect[3] - parray[id].d_effect[10], parray[id].d_effect[4] - parray[id].d_effect[10], parray[id].d_effect[3] + parray[id].d_effect[10], parray[id].d_effect[4] + parray[id].d_effect[10]);
+			Ellipse(hMemDC, parray[id].d_effect[5] - parray[id].d_effect[11], parray[id].d_effect[6] - parray[id].d_effect[11], parray[id].d_effect[5] + parray[id].d_effect[11], parray[id].d_effect[6] + parray[id].d_effect[11]);
+			Ellipse(hMemDC, parray[id].d_effect[7] - parray[id].d_effect[12], parray[id].d_effect[8] - parray[id].d_effect[12], parray[id].d_effect[7] + parray[id].d_effect[12], parray[id].d_effect[8] + parray[id].d_effect[12]);
 		}
 	}
 }
