@@ -12,6 +12,9 @@ void move_bullet_object(float elapsedTimeInSec);
 //총알 발사 체크 및 총알 발사 쿨타임 저장
 void check_lauched_bullet(float elapsedTimeInSec);
 
+//죽은 플레이어 리스폰 타임 계산 및 부활
+void HandleDeathPlayer(float elapsedTimeInSec);
+
 //검은벽 움직이지 못하게
 void ColRect(RECT rec, RECT& rec2, double* cx, double* cy);
 
@@ -20,10 +23,6 @@ void ReloadBullet(int* reload, double bullet[][4], int time);
 
 //총알-블록 충돌
 void CollisionBetweenBulletAndBlock();
-
-//일대일 총알 맞음
-void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double effect[][17], 
-	int i, HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd, BOOL* death);
 
 //보드판 위에 특수총알
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC);

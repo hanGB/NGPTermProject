@@ -186,8 +186,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		ZeroMemory(&lf, sizeof(lf));
 
 		multireset(parray, rectView, sx, sy);
-		SetTimer(hWnd, 3, 16, NULL);
-		SetTimer(hWnd, 4, 33, NULL);
+		SetTimer(hWnd, 0, 16, NULL);
+		SetTimer(hWnd, 1, 33, NULL);
 		return 0;
 	case WM_PAINT:
 	{
@@ -272,14 +272,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			Hdeatheffect(oldBrush, hBrush2, eBrush, hMemDC);
 
 			SetBkColor(hMemDC, RGB(255, 255, 255));
-			RECT aect = { rectView.left,rectView.bottom * 1 / 4,rectView.right,rectView.bottom * 3 / 4 };
+			RECT aect = { rectView.right * 3 / 32, rectView.bottom * 1 / 16,
+				rectView.right * 15 / 32, rectView.bottom * 3 / 16};
+
 			wsprintf(str, "Clint id = %d", clnt_data.ci);
 			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
-			if (life == 0)
-			{
-				Hgameover(hMemDC, rectView, score, str, hWnd);
+			aect = { rectView.right * 12 / 16, rectView.bottom * 1 / 32,
+				rectView.right * 15 / 16, rectView.bottom * 8 / 32 };
+						
+			if (parray[clnt_data.ci].life >= 0) {
+				SetTextColor(hMemDC, RGB(0, 0, 255));
+				wsprintf(str, "LIFE: %d", parray[clnt_data.ci].life);
 			}
+			else {
+				SetTextColor(hMemDC, RGB(255, 0, 0));
+				wsprintf(str, "DEATH");
+			}
+			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+
+			SetTextColor(hMemDC, RGB(0, 0, 0));
+
 			SelectObject(hMemDC, OldFont);
 			DeleteObject(Font);
 
@@ -303,44 +316,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	}
 	case WM_TIMER: // 시간이 경과하면 메시지 자동 생성
 		switch (wParam) {
-		case 1:
-			if (seta < 2 * 3.14)
-			{
-				seta += 0.3;
-			}
-			else
-			{
-				seta = 0;
-			}
-
-			{
-
-				if (death == false)
-				{
-					MovePlayer(&clnt_data.dx, &clnt_data.dy);
-				}
-			}
-
-			if (ten < 10)//1초
-			{
-				ten++;
-			}
-			else
-			{
-				ten = 0;
-				gametime++;
-				score++;
-			}
-			break;
-		case 2:
-
-			break;
-
-		case 3:
-			//60fps로 화면 다시 그리기
+		case 0:
+			//60fps로 화면 렌더링
 			InvalidateRect(hWnd, NULL, FALSE);
+			UpdateWindow(hWnd);
 			break;
-		case 4:
+		case 1:
 			//30fps로 데이터 전송
 			if (!g_bReadyToSend)
 				g_bReadyToSend = true;
@@ -348,14 +329,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		break;
 
 	case WM_CHAR:
-		
-		
-		//InvalidateRect(hWnd, NULL, TRUE);
 		break;
 
 	case WM_KEYDOWN:
-		//MessageBox(NULL, "test", "test", MB_OK);
-
 	{
 		if (wParam == 'w' || wParam == 'W')
 		{
@@ -412,6 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		}
 	}
 	break;
+
 	case WM_KEYUP:
 
 		if (wParam == 'w' || wParam == 'W')
@@ -452,45 +429,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		}
 		break;
 	case WM_COMMAND:
-		switch (LOWORD(wParam)) {
-		case ID_40001://초급
-			level = 0;
-			SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-				, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-				, &ten, &gametime, level, sgun, &scount, multi);
-			multireset(parray, rectView, sx, sy);
-			break;
-		case ID_40002://중급
-			level = 1;
-			SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-				, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-				, &ten, &gametime, level, sgun, &scount, multi);
-			multireset(parray, rectView, sx, sy);
-			break;
-		case ID_40003://고급
-			level = 2;
-			SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-				, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-				, &ten, &gametime, level, sgun, &scount, multi);
-			multireset(parray, rectView, sx, sy);
-			break;
-		case ID_40004:
-			multi = false;
-			SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-				, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-				, &ten, &gametime, level, sgun, &scount, multi);
-			multireset(parray, rectView, sx, sy);
-			break;
-
-		case ID_40005:
-			multi = true;
-			SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-				, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-				, &ten, &gametime, level, sgun, &scount, multi);
-			multireset(parray, rectView, sx, sy);
-			break;
-		}
 		break;
+
 	case WM_DESTROY:
 		return 0;
 	}

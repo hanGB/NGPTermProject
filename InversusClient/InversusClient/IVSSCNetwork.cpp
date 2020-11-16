@@ -49,22 +49,11 @@ DWORD WINAPI RecvMsg(LPVOID arg) {
 		int GetSize;
 		char suBuffer[BUFSIZE];
 
-
-		//GetSize = recv(sock, suBuffer, sizeof(suBuffer) - 1, 0);
-
 		recv(sock, (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
 		memcpy(block, g_GameObjects.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
 		memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
 		clnt_data.coolTime = g_GameObjects.players[clnt_data.ci].coolTime;
-
-		/*if (GetSize >= 0 && GetSize < 3000) {
-			suBuffer[GetSize] = '\0';
-			GameObjects temp = *(GameObjects*)suBuffer;
-
-			memcpy(block, temp.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
-			memcpy(parray, temp.players, sizeof(int) * MAX_PLAYER);
-		}*/
 	}
 	return 0;
 }

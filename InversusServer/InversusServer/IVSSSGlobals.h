@@ -34,6 +34,8 @@ typedef struct CData {//클라이언트로부터 받은 데이터
 	float coolTime = 0; //총알 연속 발사 쿨타임
 }CData;
 
+#define MAX_LIFE 2
+
 typedef struct player {
 	int nu;
 	BOOL enable = false;
@@ -42,7 +44,10 @@ typedef struct player {
 	double bullet[6][4] = { 0, };
 	RECT regg[6];
 	double d_effect[17] = { 0, };
+	BOOL death = false;
+	int life = MAX_LIFE;
 	float coolTime = 0; //총알 연속 발사 쿨타임
+	float respawnTime = 0; //리스폰까지 시간
 }player;
 
 typedef struct GameObjects {//클라이언트로 보낼 데이터
@@ -52,8 +57,8 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 
 
 // 게임 로직 관련
-#define PLAYER_SPEED 50
-#define BULLET_SPEED 300
+#define PLAYER_SPEED 100
+#define BULLET_SPEED 500
 
 #define LIMIT_ENEMY 20
 #define LIMIT_SGUN 100
@@ -66,3 +71,5 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 #define BULLET_COOL_TIME 0.3
 
 #define BLOCK_SIZE 50
+
+#define RESPAWN_TIME 3

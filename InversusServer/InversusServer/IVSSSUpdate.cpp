@@ -18,6 +18,7 @@ void Update(float elapsedTimeInSec)
 	move_player_object(elapsedTimeInSec);
 	check_lauched_bullet(elapsedTimeInSec);
 	move_bullet_object(elapsedTimeInSec);
+	HandleDeathPlayer(elapsedTimeInSec);
 	CollisionBetweenBulletAndBlock();
 }
 
@@ -54,95 +55,100 @@ void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하
 
 void move_player_object(float elapsedTimeInSec)
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) {
-		if (clnt_data[id].ci != NON_PLAYER) {
-			if (clnt_data[id].p_key.KEY_W)
-			{
-				parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
-			}
-
-			if (clnt_data[id].p_key.KEY_A)
-			{
-				parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
-			}
-
-			if (clnt_data[id].p_key.KEY_S)
-			{
-				parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
-			}
-
-			if (clnt_data[id].p_key.KEY_D)
-			{
-				parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
-			}
-
-			int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
-			int player_AA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));
-
-			int player_BB_xidex = int((parray[id].cx - sx / 2) / (rectView.right / BOARD_SIZE));
-			int player_BB_yidex = int((parray[id].cy - sy / 2) / (rectView.bottom / 14));
-
-			if (g_GameObjects.blocks[player_AA_yidex][player_AA_xidex] != id)
+	for (int id = 0; id < MAX_PLAYER; ++id) 
+	{
+		if (clnt_data[id].ci != NON_PLAYER) 
+		{
+			if (parray[id].enable) 
 			{
 				if (clnt_data[id].p_key.KEY_W)
-				{
-					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
-				}
-
-				if (clnt_data[id].p_key.KEY_A)
-				{
-					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
-				}
-
-				if (clnt_data[id].p_key.KEY_S)
 				{
 					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
-				if (clnt_data[id].p_key.KEY_D)
-				{
-					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
-				} 
-			}
-			else if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != id)
-			{
-				if (clnt_data[id].p_key.KEY_W)
-				{
-					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
-				}
-
 				if (clnt_data[id].p_key.KEY_A)
 				{
-					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
 				if (clnt_data[id].p_key.KEY_S)
 				{
-					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
 				if (clnt_data[id].p_key.KEY_D)
 				{
-					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
-			}
 
-			if (rectView.top+100 > parray[id].cy - sy / 2)
-				parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+				int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
+				int player_AA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));
 
-			if (rectView.bottom < parray[id].cy + sy / 2)
-				parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+				int player_BB_xidex = int((parray[id].cx - sx / 2) / (rectView.right / BOARD_SIZE));
+				int player_BB_yidex = int((parray[id].cy - sy / 2) / (rectView.bottom / 14));
 
-			if (rectView.left > parray[id].cx - sx / 2)
-				parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+				if (g_GameObjects.blocks[player_AA_yidex][player_AA_xidex] != id)
+				{
+					if (clnt_data[id].p_key.KEY_W)
+					{
+						parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
 
-			if (rectView.right < parray[id].cx + sx / 2)
-				parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					if (clnt_data[id].p_key.KEY_A)
+					{
+						parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
 
-			for (int i = 0; i < 6; i++)
-			{
-				parray[id].rx[i] = sx / 4 * cos(seta + i) + parray[id].cx;
-				parray[id].ry[i] = sy / 4 * sin(seta + i) + parray[id].cy;
+					if (clnt_data[id].p_key.KEY_S)
+					{
+						parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+
+					if (clnt_data[id].p_key.KEY_D)
+					{
+						parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+				}
+				else if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != id)
+				{
+					if (clnt_data[id].p_key.KEY_W)
+					{
+						parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+
+					if (clnt_data[id].p_key.KEY_A)
+					{
+						parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+
+					if (clnt_data[id].p_key.KEY_S)
+					{
+						parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+
+					if (clnt_data[id].p_key.KEY_D)
+					{
+						parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					}
+				}
+
+				if (rectView.top + 100 > parray[id].cy - sy / 2)
+					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+
+				if (rectView.bottom < parray[id].cy + sy / 2)
+					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+
+				if (rectView.left > parray[id].cx - sx / 2)
+					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+
+				if (rectView.right < parray[id].cx + sx / 2)
+					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+
+				for (int i = 0; i < 6; i++)
+				{
+					parray[id].rx[i] = sx / 4 * cos(seta + i) + parray[id].cx;
+					parray[id].ry[i] = sy / 4 * sin(seta + i) + parray[id].cy;
+				}
 			}
 		}
 	}
@@ -155,48 +161,73 @@ bullet[i][3] : i번째 방향
 */
 void check_lauched_bullet(float elapsedTimeInSec)
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) {
-		if (clnt_data[id].ci != NON_PLAYER) {
-			if (clnt_data[id].p_key.ARROW_UP)
+	for (int id = 0; id < MAX_PLAYER; ++id) 
+	{
+		if (clnt_data[id].ci != NON_PLAYER) 
+		{
+			if (parray[id].enable) 
 			{
-				if (clnt_data[id].coolTime <= 0) {
-					Kshotbullet(id, 2);
-					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				if (clnt_data[id].p_key.ARROW_UP)
+				{
+					if (clnt_data[id].coolTime <= 0) {
+						Kshotbullet(id, 2);
+						clnt_data[id].coolTime = BULLET_COOL_TIME;
+					}
+					else
+						clnt_data[id].coolTime -= elapsedTimeInSec;
 				}
-				else
-					clnt_data[id].coolTime -= elapsedTimeInSec;
-			}
 
-			if (clnt_data[id].p_key.ARROW_DOWN)
-			{
-				if (clnt_data[id].coolTime <= 0) {
-					Kshotbullet(id, 3);
-					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				if (clnt_data[id].p_key.ARROW_DOWN)
+				{
+					if (clnt_data[id].coolTime <= 0) {
+						Kshotbullet(id, 3);
+						clnt_data[id].coolTime = BULLET_COOL_TIME;
+					}
+					else
+						clnt_data[id].coolTime -= elapsedTimeInSec;
 				}
-				else
-					clnt_data[id].coolTime -= elapsedTimeInSec;
-			}
 
-			if (clnt_data[id].p_key.ARROW_LEFT)
-			{
-				if (clnt_data[id].coolTime <= 0) {
-					Kshotbullet(id, 1);
-					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				if (clnt_data[id].p_key.ARROW_LEFT)
+				{
+					if (clnt_data[id].coolTime <= 0) {
+						Kshotbullet(id, 1);
+						clnt_data[id].coolTime = BULLET_COOL_TIME;
+					}
+					else
+						clnt_data[id].coolTime -= elapsedTimeInSec;
 				}
-				else
-					clnt_data[id].coolTime -= elapsedTimeInSec;
-			}
 
-			if (clnt_data[id].p_key.ARROW_RIGHT)
-			{
-				if (clnt_data[id].coolTime <= 0) {
-					Kshotbullet(id, 0);
-					clnt_data[id].coolTime = BULLET_COOL_TIME;
+				if (clnt_data[id].p_key.ARROW_RIGHT)
+				{
+					if (clnt_data[id].coolTime <= 0) {
+						Kshotbullet(id, 0);
+						clnt_data[id].coolTime = BULLET_COOL_TIME;
+					}
+					else
+						clnt_data[id].coolTime -= elapsedTimeInSec;
 				}
-				else
-					clnt_data[id].coolTime -= elapsedTimeInSec;
+				parray[id].coolTime = clnt_data[id].coolTime;
 			}
-			parray[id].coolTime = clnt_data[id].coolTime;
+		}
+	}
+}
+
+void HandleDeathPlayer(float elapsedTimeInSec)
+{
+	for (int i = 0; i < MAX_PLAYER; ++i) 
+	{
+		if (parray[i].death) 
+		{
+			if (parray[i].life >= 0) 
+			{
+				parray[i].respawnTime -= elapsedTimeInSec;
+				
+				if (parray[i].respawnTime <= 0) 
+				{
+					parray[i].death = false;
+					parray[i].enable = true;
+				}
+			}
 		}
 	}
 }
@@ -353,6 +384,9 @@ void CollisionBetweenBulletAndBlock()
 
 						if (IntersectRect(&temp, &regg, &rec)) {
 							parray[deathid].enable = false;
+							parray[deathid].death = true;
+							parray[deathid].life--;
+							parray[deathid].respawnTime = RESPAWN_TIME;
 							DeathEffect(deathid);
 						}
 					}
@@ -398,20 +432,6 @@ void Tdetaheffect()//데스이펙타임
 		}
 	}
 }
-
-/*
-void Hcolplayer(double cx, double cy, double dx, double dy, RECT* regg, double effect[][17], int i, HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd, BOOL* death)//일대일 총알 맞음
-{
-	RECT rec = { cx - dx / 2, cy - dy / 2, cx + dx / 2, cy + dy / 2 };
-	RECT temp;
-	if (IntersectRect(&temp, &regg[i], &rec))
-	{
-		DeathEffect(effect, cx, cy, dx, i);
-		Hgamewin(hMemDC, rectView, check, str, hWnd);
-		*death = true;
-	}
-}
-*/
 
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
 {

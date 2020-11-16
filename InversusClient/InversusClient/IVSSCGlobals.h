@@ -37,15 +37,20 @@ typedef struct CData {//서버로 보내는 데이터
 	float coolTime = 0; //총알 연속 발사 쿨타임
 }CData;
 
+#define MAX_LIFE 2
+
 typedef struct player {
 	int nu;
 	BOOL enable = false;
 	double rx[7], ry[7];
 	double cx, cy;
-	double bullet[6][4] = { 0 };
+	double bullet[6][4] = { 0, };
 	RECT regg[6];
 	double d_effect[17] = { 0, };
+	BOOL death = false;
+	int life = MAX_LIFE;
 	float coolTime = 0; //총알 연속 발사 쿨타임
+	float respawnTime = 0; //리스폰까지 시간
 }player;
 
 
