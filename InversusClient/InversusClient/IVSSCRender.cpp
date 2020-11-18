@@ -38,24 +38,36 @@ void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//
 		GradientFill(pDC, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
 }
 
-void Hcreateboad(int block[][20], double dx, double dy, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH hBrush3, HBRUSH oldBrush, HDC hMemDC)
+void Hcreateboad(int block[][20], double dx, double dy, HDC hMemDC)
 {//보드판
+	HBRUSH hBrush, oldBrush;
+	HPEN hPen, oldPen;
+
+	hPen = CreatePen(PS_SOLID, 3, RGB(125, 125, 125));//보드
+	oldPen = (HPEN)SelectObject(hMemDC, hPen);
+
 	for (int i = 2; i < 20; i++)
 	{
 		for (int j = 0; j < 20; j++)
 		{
 			if (block[i][j] == clnt_data.ci)//흰색
 			{
+				hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
 			}
 			else
 			{
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
+				hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 				Rectangle(hMemDC, dx * j, dy * i, dx * (j + 1), dy * (i + 1));
 			}
+			SelectObject(hMemDC, oldBrush);
+			DeleteObject(hBrush);
 		}
 	}
+	SelectObject(hMemDC, oldPen);
+	DeleteObject(hPen);
 }
 
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
@@ -108,14 +120,20 @@ void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRU
 	}
 }
 
-void Hdeatheffect(HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC)//데스이펙트
+void Hdeatheffect(HDC hMemDC, int* ecolor)//데스이펙트
 {
+	HBRUSH hBrush, oldBrush;
+
 	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
-		if (id == clnt_data.ci)
-			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-		else
-			oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
+		if (id == clnt_data.ci) {
+			hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+		}
+		else {
+			hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+		}
 		if (parray[id].d_effect[0] > 0)
 		{
 			Ellipse(hMemDC, parray[id].d_effect[1] - parray[id].d_effect[9], parray[id].d_effect[2] - parray[id].d_effect[9], parray[id].d_effect[1] + parray[id].d_effect[9], parray[id].d_effect[2] + parray[id].d_effect[9]);
@@ -123,20 +141,34 @@ void Hdeatheffect(HBRUSH oldBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC)//�
 			Ellipse(hMemDC, parray[id].d_effect[5] - parray[id].d_effect[11], parray[id].d_effect[6] - parray[id].d_effect[11], parray[id].d_effect[5] + parray[id].d_effect[11], parray[id].d_effect[6] + parray[id].d_effect[11]);
 			Ellipse(hMemDC, parray[id].d_effect[7] - parray[id].d_effect[12], parray[id].d_effect[8] - parray[id].d_effect[12], parray[id].d_effect[7] + parray[id].d_effect[12], parray[id].d_effect[8] + parray[id].d_effect[12]);
 		}
+		SelectObject(hMemDC, oldBrush);
+		DeleteObject(hBrush);
 	}
 }
 
-void Hscorebord(HBRUSH oldBrush, HBRUSH hBrush, HBRUSH hBrush2, HBRUSH eBrush, HDC hMemDC, RECT rectView, double dx, double dy, int life, HFONT Font, HFONT OldFont, char* str, int score, int combo, RECT tect, LOGFONT* lf, BOOL multi)
+void Hscorebord(HDC hMemDC, RECT rectView, double dx, double dy, int life, 
+	char* str, int score, int combo, RECT tect, LOGFONT* lf, BOOL multi)
 {//상단 스코어보드판
-	oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-	Rectangle(hMemDC, 0, 0, rectView.right, rectView.top);
-	lf->lfHeight = dy;
-	OldFont = (HFONT)SelectObject(hMemDC, Font);
+	HBRUSH hBrush, oldBrush;
+	HFONT hFont, oldFont;
 
-	{
-		wsprintf(str, "versus mode");
-		DrawText(hMemDC, str, -1, &tect, DT_LEFT);
-	}
+	hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
+	oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+
+	Rectangle(hMemDC, 0, 0, rectView.right, rectView.top);
+
+	SelectObject(hMemDC, oldBrush);
+	DeleteObject(hBrush);
+
+	lf->lfHeight = dy;
+	hFont = CreateFontIndirect(lf);
+	oldFont = (HFONT)SelectObject(hMemDC, hFont);
+
+	wsprintf(str, "versus mode");
+	DrawText(hMemDC, str, -1, &tect, DT_LEFT);
+
+	SelectObject(hMemDC, oldFont);
+	DeleteObject(hFont);
 }
 
 void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd)//일대일 승패 메세지

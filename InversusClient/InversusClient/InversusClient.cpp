@@ -102,6 +102,10 @@ DWORD WINAPI ClientMain(LPVOID arg)
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 
+	// Turn Off Nagle Algorithm 
+	bool optval = TRUE;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&optval, sizeof(optval));
+
 	DialogBox(g_hinst, MAKEINTRESOURCE(IDC_IPADDRESS1), hWnd, (DLGPROC)&DialogProc);
 
 	SOCKADDR_IN serveraddr;
@@ -133,10 +137,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 {
 	PAINTSTRUCT ps;
 	static HDC hDC, hMemDC;
-	HBRUSH hBrush, oldBrush, eBrush, eBrush2, ehBrush, unBrush;
-	HBRUSH hBrush2, hBrush3, oldBrush2;
-	HPEN MyPen, ePen, OldPen, cPen, unPen, iPen;
-	HFONT Font, OldFont;
 	RECT regg[6];// = { 400, 300, 500, 310 };//총알 날라가는거
 	RECT segg[18];//특수총알
 	static RECT rectView;
@@ -176,6 +176,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static int level = 1;
 
 	static BOOL multi = true;
+
+	static CImage img;
 									 //메세지 처리하기
 	switch (iMessage) {
 	case WM_CREATE:
@@ -188,12 +190,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		multireset(parray, rectView, sx, sy);
 		SetTimer(hWnd, 0, 16, NULL);
 		SetTimer(hWnd, 1, 33, NULL);
+
+		img.Create(rectView.right, rectView.bottom, 24);
+
 		return 0;
 	case WM_PAINT:
 	{
-		CImage img;
-		img.Create(rectView.right, rectView.bottom, 24);
 		hDC = BeginPaint(hWnd, &ps);
+
+		HBRUSH hBrush, oldBrush;
+		HFONT Font, OldFont;
+		HPEN hPen, OldPen;
+
+
+		/*
+		HBRUSH eBrush, eBrush2, ehBrush, unBrush, hBrush2, hBrush3, oldBrush2;
+		HPEN MyPen, ePen, OldPen, cPen, unPen, iPen;
+
 		MyPen = CreatePen(PS_SOLID, 3, RGB(125, 125, 125));//보드
 		ePen = CreatePen(PS_SOLID, 3, RGB(ecolor[0], ecolor[1], ecolor[2]));//적
 		cPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
@@ -207,38 +220,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		eBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
 		eBrush2 = CreateSolidBrush(RGB(200, 10, 10));
 		ehBrush = CreateHatchBrush(HS_BDIAGONAL, RGB(ecolor[0], ecolor[1], ecolor[2]));//적 빗금
-
+		*/
 		hMemDC = img.GetDC();
 		{
 			//-------------------------------------------------------
 			//보드판
-			Font = CreateFontIndirect(&lf);
-			OldFont = (HFONT)SelectObject(hMemDC, Font);
-			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-			Hscorebord(oldBrush, hBrush, hBrush2, eBrush, hMemDC, rectView, sx, sy, life, Font, OldFont, str, score, combo, tect, &lf, multi);
-
-			OldPen = (HPEN)SelectObject(hMemDC, MyPen);
-			Hcreateboad(block, sx, sy, hBrush, hBrush2, hBrush3, oldBrush, hMemDC);
+			
+			Hscorebord(hMemDC, rectView, sx, sy, life, str, score, combo, tect, &lf, multi);
+			Hcreateboad(block, sx, sy, hMemDC);
 			{
-				OldPen = (HPEN)SelectObject(hMemDC, cPen);
 				//주인공
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
 				if (death == false)
 				{
 					for (int i = 0; i < clientcount; i++)
 					{
 						if (parray[i].enable == true)
 						{
-							oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush3);
-							if (i == clnt_info.ci)
-								oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush2);
+							if (i == clnt_info.ci) {
+								hBrush = CreateSolidBrush(RGB(200, 10, 10));
+								oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+							}
+							else {
+								hBrush = CreateSolidBrush(RGB(125, 125, 125));//검정
+								oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+							}
 							Rectangle(hMemDC, parray[i].cx - sx / 2, parray[i].cy - sy / 2, parray[i].cx + sx / 2, parray[i].cy + sy / 2);
+							SelectObject(hMemDC, oldBrush);
+							DeleteObject(hBrush);
 						}
 					}
 				}
-				OldPen = (HPEN)SelectObject(hMemDC, cPen);
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-
 				//총알
 				for (int j = 0; j < clientcount; j++)
 				{
@@ -249,11 +260,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						{
 							if (death == false && parray[j].enable == true)
 							{
-								if (parray[j].bullet[i][0] == 1)
+								if (parray[j].bullet[i][0] == 1) {
+									hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
 									oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-								else
-									oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
+								}
+								else {
+									hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+									oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+								}
 								Ellipse(hMemDC, parray[j].rx[i] - sx / 10, parray[j].ry[i] - sx / 10, parray[j].rx[i] + sy / 10, parray[j].ry[i] + sy / 10);
+								SelectObject(hMemDC, oldBrush);
+								DeleteObject(hBrush);
 							}
 						}
 						else if (parray[j].bullet[i][0] == 3)
@@ -269,7 +286,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				}
 			}
 			//사망이펙트
-			Hdeatheffect(oldBrush, hBrush2, eBrush, hMemDC);
+			Hdeatheffect(hMemDC, ecolor);
+
+			Font = CreateFontIndirect(&lf);
+			OldFont = (HFONT)SelectObject(hMemDC, Font);
 
 			SetBkColor(hMemDC, RGB(255, 255, 255));
 			RECT aect = { rectView.right * 3 / 32, rectView.bottom * 1 / 16,
@@ -290,24 +310,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				wsprintf(str, "DEATH");
 			}
 			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-
 			SetTextColor(hMemDC, RGB(0, 0, 0));
 
 			SelectObject(hMemDC, OldFont);
 			DeleteObject(Font);
 
-			SelectObject(hMemDC, oldBrush);
-			DeleteObject(hBrush);
-			DeleteObject(eBrush);
-			DeleteObject(eBrush2);
-			DeleteObject(MyPen);
-			DeleteObject(cPen);
-			DeleteObject(ePen);
-			DeleteObject(iPen);
-			DeleteObject(hBrush2);
-			DeleteObject(hBrush3);
 			img.Draw(hDC, 0, 0);
-			img.ReleaseDC();
 		}
 		//-----------------------------------------------------------------------------------
 
@@ -432,6 +440,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		break;
 
 	case WM_DESTROY:
+		img.ReleaseDC();
+		PostQuitMessage(0);
 		return 0;
 	}
 	return(DefWindowProc(hWnd, iMessage, wParam, IParam));//위의 세 메세지 외의 나머지 메세지는 OS로
