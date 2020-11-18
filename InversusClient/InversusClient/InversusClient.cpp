@@ -231,7 +231,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				//주인공
 				if (death == false)
 				{
-					for (int i = 0; i < clientcount; i++)
+					for (int i = 0; i < MAX_PLAYER; i++)
 					{
 						if (parray[i].enable == true)
 						{
@@ -250,7 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 					}
 				}
 				//총알
-				for (int j = 0; j < clientcount; j++)
+				for (int j = 0; j < MAX_PLAYER; j++)
 				{
 					for (int i = 0; i < 6; i++)
 					{

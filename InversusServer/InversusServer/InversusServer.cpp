@@ -38,6 +38,7 @@ double sx, sy;
 double seta = 0;
 
 int g_prevTimeInMillisecond = 0;
+bool connect_index[4] = { false, };
 
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
@@ -143,6 +144,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
 		client_sock = accept(sock, (SOCKADDR*)&clientaddr, &addrlen);
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
 
+		/*
 		if (clientCount == 0)
 		{
 			parray[clientCount].cx = 100;
@@ -167,8 +169,46 @@ DWORD WINAPI ServerMain(LPVOID arg)
 
 		clnt_info[clientCount].ci = clientCount;
 		clientSocks[clientCount++] = client_sock;//클라이언트 소켓배열에 방금 가져온 소켓 주소를 전달
+		*/
 
-		send(client_sock, (char*)&clnt_info[clientCount - 1], sizeof(Clinfo), 0);
+		int clinet_index = -1;
+		for (int i = 0; i < MAX_PLAYER; i++)
+		{
+			if (connect_index[i] == false)
+			{
+				clinet_index = i;
+				if (i == 0)
+				{
+					parray[i].cx = 100;
+					parray[i].cy = 200;
+				}
+				else if (i == 1)
+				{
+					parray[i].cx = 900;
+					parray[i].cy = 200;
+				}
+				else if (i == 2)
+				{
+					parray[i].cx = 100;
+					parray[i].cy = 600;
+				}
+				else if (i == 3)
+				{
+					parray[i].cx = 900;
+					parray[i].cy = 600;
+				}
+				parray[i].enable = true;
+
+				clnt_info[i].ci = i;
+				clientSocks[i] = client_sock;
+				connect_index[i] = true;
+				clientCount++;
+				break;
+			}
+		}
+
+		//send(client_sock, (char*)&clnt_info[clientCount - 1], sizeof(Clinfo), 0);
+		send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
 
 		ReleaseMutex(hMutex);//뮤텍스 중지
 
