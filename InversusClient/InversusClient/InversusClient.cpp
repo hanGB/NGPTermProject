@@ -176,8 +176,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static int level = 1;
 
 	static BOOL multi = true;
-
-	static CImage img;
 									 //메세지 처리하기
 	switch (iMessage) {
 	case WM_CREATE:
@@ -191,12 +189,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		SetTimer(hWnd, 0, 16, NULL);
 		SetTimer(hWnd, 1, 33, NULL);
 
-		img.Create(rectView.right, rectView.bottom, 24);
-
 		return 0;
 	case WM_PAINT:
 	{
 		hDC = BeginPaint(hWnd, &ps);
+
+		CImage img;
+		img.Create(rectView.right, rectView.bottom, 24);
 
 		HBRUSH hBrush, oldBrush;
 		HFONT Font, OldFont;
@@ -316,6 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			DeleteObject(Font);
 
 			img.Draw(hDC, 0, 0);
+			img.ReleaseDC();
 		}
 		//-----------------------------------------------------------------------------------
 
@@ -440,7 +440,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		break;
 
 	case WM_DESTROY:
-		img.ReleaseDC();
 		PostQuitMessage(0);
 		return 0;
 	}
