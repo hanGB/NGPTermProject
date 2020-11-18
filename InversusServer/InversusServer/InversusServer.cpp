@@ -87,6 +87,10 @@ DWORD WINAPI ServerMain(LPVOID arg)
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 
+	// Turn Off Nagle Algorithm 
+	bool optval = TRUE;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&optval, sizeof(optval));
+
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;

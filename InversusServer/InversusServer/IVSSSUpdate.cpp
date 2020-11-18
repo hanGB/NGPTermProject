@@ -23,7 +23,7 @@ void Update(float elapsedTimeInSec)
 }
 
 
-void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하게
+void ColRect(RECT rec, RECT& rec2,int id)//검은벽 움직이지 못하게
 {
 	RECT temp;
 	if (IntersectRect(&temp, &rec, &rec2))
@@ -32,24 +32,47 @@ void ColRect(RECT rec, RECT& rec2, double* cx, double* cy)//검은벽 움직이지 못하
 		{
 			if (temp.top == rec2.top)
 			{
-				*cy -= temp.bottom - temp.top;
+				parray[id].cy -= temp.bottom - temp.top;
 			}
 			else if (temp.bottom == rec2.bottom)
 			{
-				*cy += temp.bottom - temp.top;
+				parray[id].cy += temp.bottom - temp.top;
 			}
 		}
 		else
 		{
 			if (temp.left == rec2.left)
 			{
-				*cx -= temp.right - temp.left;
+				parray[id].cx -= temp.right - temp.left;
 			}
 			else if (temp.right == rec2.right)
 			{
-				*cx += temp.right - temp.left;
+				parray[id].cx += temp.right - temp.left;
 			}
 		}
+	}
+}
+
+void back_move_player(int id, float elapsedTimeInSec)
+{
+	if (clnt_data[id].p_key.KEY_W)
+	{
+		parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+	}
+
+	if (clnt_data[id].p_key.KEY_A)
+	{
+		parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+	}
+
+	if (clnt_data[id].p_key.KEY_S)
+	{
+		parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+	}
+
+	if (clnt_data[id].p_key.KEY_D)
+	{
+		parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
 	}
 }
 
@@ -81,56 +104,54 @@ void move_player_object(float elapsedTimeInSec)
 					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
+				/*
+				RECT rec_player = { parray[id].cx - sx / 2, parray[id].cy - sy / 2, parray[id].cx + sx / 2, parray[id].cy + sy / 2 };
+				for (int y = 0; y < BOARD_SIZE; y++)
+				{
+					for (int x = 0; x < BOARD_SIZE; x++)
+					{
+						if (g_GameObjects.blocks[y][x] != id)
+						{
+							RECT rec_board = { sx * x ,sy * y ,sx * (x + 1),sy * (y + 1) };
+							ColRect(rec_player, rec_board, id);
+						}
+
+					}
+				}
+				*/
+				
 				int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
 				int player_AA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));
+
+				int player_AB_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
+				int player_AB_yidex = int((parray[id].cy - sy / 2) / (rectView.bottom / 14));
 
 				int player_BB_xidex = int((parray[id].cx - sx / 2) / (rectView.right / BOARD_SIZE));
 				int player_BB_yidex = int((parray[id].cy - sy / 2) / (rectView.bottom / 14));
 
+				int player_BA_xidex = int((parray[id].cx - sx / 2) / (rectView.right / BOARD_SIZE));
+				int player_BA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));
+
 				if (g_GameObjects.blocks[player_AA_yidex][player_AA_xidex] != id)
 				{
-					if (clnt_data[id].p_key.KEY_W)
-					{
-						parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_A)
-					{
-						parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_S)
-					{
-						parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_D)
-					{
-						parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
+					back_move_player(id, elapsedTimeInSec);
 				}
-				else if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != id)
+
+				if (g_GameObjects.blocks[player_AB_yidex][player_AB_xidex] != id)
 				{
-					if (clnt_data[id].p_key.KEY_W)
-					{
-						parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_A)
-					{
-						parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_S)
-					{
-						parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
-
-					if (clnt_data[id].p_key.KEY_D)
-					{
-						parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
-					}
+					back_move_player(id, elapsedTimeInSec);
 				}
+
+				if (g_GameObjects.blocks[player_BA_yidex][player_BA_xidex] != id)
+				{
+					back_move_player(id, elapsedTimeInSec);
+				}
+
+				if (g_GameObjects.blocks[player_BB_yidex][player_BB_xidex] != id)
+				{
+					back_move_player(id, elapsedTimeInSec);
+				}
+				
 
 				if (rectView.top + 100 > parray[id].cy - sy / 2)
 					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
