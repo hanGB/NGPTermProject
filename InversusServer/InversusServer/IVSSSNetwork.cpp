@@ -33,6 +33,23 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 	return (len - left);
 }
 
+void Waiting()
+{
+	for (int id = 0; id < MAX_PLAYER; ++id)
+	{
+		if (clnt_data[id].ci != NON_PLAYER)
+		{
+			if (parray[id].enable)
+			{
+				if (clnt_data[id].p_key.KEY_SPACEBAR)
+				{
+					parray[id].gameready = true;
+				}
+			}
+		}
+	}
+}
+
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	SOCKET clientSock = (SOCKET)arg; //매개변수로받은 클라이언트 소켓을 전달
@@ -65,7 +82,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			g_prevTimeInMillisecond = currentTime;
 			float elapsedTimeInSec = (float)elapsedTime / 1000.f;
 			
-			Update(elapsedTimeInSec);
+			if (g_GameObjects.GameState == 1)
+				Update(elapsedTimeInSec);
+			else
+				Waiting();
 
 			player temp = parray[playerid];
 			temp.nu = playerid;
@@ -108,6 +128,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	WaitForSingleObject(hMutex, INFINITE);
 	parray[ci].enable = false;
+	for (int i = 0; i < MAX_PLAYER; i++)
+	{
+		if (connect_index[i] == true)
+			send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
+
+	}
 	connect_index[ci] = false;
 
 	clientCount--;//클라이언트 개수 하나 감소

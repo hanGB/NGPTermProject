@@ -158,8 +158,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static int ecount = 0; //적 카운트
 	static int etime = 30; // 적 생성시간
 
-	static BOOL death = false;//플레이어 죽음
-	static BOOL infi = false;
 	static int dcount = 0;//부활 카운트
 	static int life = 3;
 
@@ -174,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static char str[120];
 
 	static int level = 1;
-
+	static BOOL death = false;
 	static BOOL multi = true;
 									 //메세지 처리하기
 	switch (iMessage) {
@@ -201,7 +199,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		HFONT Font, OldFont;
 		HPEN hPen, OldPen;
 
-
 		/*
 		HBRUSH eBrush, eBrush2, ehBrush, unBrush, hBrush2, hBrush3, oldBrush2;
 		HPEN MyPen, ePen, OldPen, cPen, unPen, iPen;
@@ -224,13 +221,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		{
 			//-------------------------------------------------------
 			//보드판
-			
-			Hscorebord(hMemDC, rectView, sx, sy, life, str, score, combo, tect, &lf, multi);
-			Hcreateboad(block, sx, sy, hMemDC);
+			if (g_GameObjects.GameState == 1)
 			{
-				//주인공
-				if (death == false)
+				Hscorebord(hMemDC, rectView, sx, sy, life, str, score, combo, tect, &lf, multi);
+				Hcreateboad(block, sx, sy, hMemDC);
 				{
+					//주인공
 					for (int i = 0; i < MAX_PLAYER; i++)
 					{
 						if (parray[i].enable == true)
@@ -248,71 +244,146 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							DeleteObject(hBrush);
 						}
 					}
-				}
-				//총알
-				for (int j = 0; j < MAX_PLAYER; j++)
-				{
-					for (int i = 0; i < 6; i++)
+					//총알
+					for (int j = 0; j < MAX_PLAYER; j++)
 					{
-						//총알 도는거
-						if (parray[j].bullet[i][0] == 1 || parray[j].bullet[i][0] == 2)
+						for (int i = 0; i < 6; i++)
 						{
-							if (death == false && parray[j].enable == true)
+							//총알 도는거
+							if (parray[j].bullet[i][0] == 1 || parray[j].bullet[i][0] == 2)
 							{
-								if (parray[j].bullet[i][0] == 1) {
-									hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
-									oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+								if (parray[j].enable == true)
+								{
+									if (parray[j].bullet[i][0] == 1) {
+										hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
+										oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+									}
+									else {
+										hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+										oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+									}
+									Ellipse(hMemDC, parray[j].rx[i] - sx / 10, parray[j].ry[i] - sx / 10, parray[j].rx[i] + sy / 10, parray[j].ry[i] + sy / 10);
+									SelectObject(hMemDC, oldBrush);
+									DeleteObject(hBrush);
 								}
-								else {
-									hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
-									oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-								}
-								Ellipse(hMemDC, parray[j].rx[i] - sx / 10, parray[j].ry[i] - sx / 10, parray[j].rx[i] + sy / 10, parray[j].ry[i] + sy / 10);
-								SelectObject(hMemDC, oldBrush);
-								DeleteObject(hBrush);
 							}
-						}
-						else if (parray[j].bullet[i][0] == 3)
-						{
-							//총알 쏜거
-							Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, 0);
-							//총알-블록 충돌
-							//Hcolblock(sx, sy, parray[0].regg, block, &score, &combo, parray[0].bullet, i, 0, 0);
-							//총알-적 충돌
-							//Hcolplayer(parray[1].cx, parray[1].cy, sx, sy, parray[0].regg, effect, i, hMemDC, rectView, 0, str, hWnd, &death);
+							else if (parray[j].bullet[i][0] == 3)
+							{
+								//총알 쏜거
+								Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, 0);
+							}
 						}
 					}
 				}
+				//사망이펙트
+				Hdeatheffect(hMemDC, ecolor);
+
+				Font = CreateFontIndirect(&lf);
+				OldFont = (HFONT)SelectObject(hMemDC, Font);
+
+				SetBkColor(hMemDC, RGB(255, 255, 255));
+				RECT aect = { rectView.right * 3 / 32, rectView.bottom * 1 / 16,
+					rectView.right * 15 / 32, rectView.bottom * 3 / 16 };
+
+				wsprintf(str, "Clint id = %d", clnt_data.ci);
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+
+				aect = { rectView.right * 12 / 16, rectView.bottom * 1 / 32,
+					rectView.right * 15 / 16, rectView.bottom * 8 / 32 };
+
+				if (parray[clnt_data.ci].life >= 0) {
+					SetTextColor(hMemDC, RGB(0, 0, 255));
+					wsprintf(str, "LIFE: %d", parray[clnt_data.ci].life);
+				}
+				else {
+					SetTextColor(hMemDC, RGB(255, 0, 0));
+					wsprintf(str, "DEATH");
+				}
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+				SetTextColor(hMemDC, RGB(0, 0, 0));
+
+				SelectObject(hMemDC, OldFont);
+				DeleteObject(Font);
+				
 			}
-			//사망이펙트
-			Hdeatheffect(hMemDC, ecolor);
+			else
+			{
+				
+				hBrush = CreateSolidBrush(RGB(255, 255, 255));
+				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+				Rectangle(hMemDC, 0, 0, rectView.right, rectView.bottom);
+				SelectObject(hMemDC, oldBrush);
+				DeleteObject(hBrush);
 
-			Font = CreateFontIndirect(&lf);
-			OldFont = (HFONT)SelectObject(hMemDC, Font);
+				lf.lfHeight = 50;
+				Font = CreateFontIndirect(&lf);
+				OldFont = (HFONT)SelectObject(hMemDC, Font);
+				wsprintf(str, "Inversus Waiting Room");
+				RECT aect = { rectView.right / 2 - 500, 50, rectView.right / 2 + 500, 250 };
+				SetTextColor(hMemDC, RGB(0, 0, 0));
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+				SelectObject(hMemDC, OldFont);
+				DeleteObject(Font);
 
-			SetBkColor(hMemDC, RGB(255, 255, 255));
-			RECT aect = { rectView.right * 3 / 32, rectView.bottom * 1 / 16,
-				rectView.right * 15 / 32, rectView.bottom * 3 / 16};
+				for (int i = 0; i < MAX_PLAYER; i++)
+				{
+					if (parray[i].enable == true)
+					{
+						hBrush = CreateSolidBrush(RGB(200, 10, 10));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+						if (parray[i].gameready == true)
+						{
+							Font = CreateFontIndirect(&lf);
+							OldFont = (HFONT)SelectObject(hMemDC, Font);
+							wsprintf(str, "READY");
+							aect = { 200 * i + 50, 350, 200 * (i + 1) - 50, 400 };
+							SetTextColor(hMemDC, RGB(255, 0, 0));
+							DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+							SelectObject(hMemDC, OldFont);
+							DeleteObject(Font);
+						}
+					}
+					else
+					{
+						hBrush = CreateSolidBrush(RGB(125, 125, 125));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					}
+					Rectangle(hMemDC, 200 * i + 50, 200, 200 * (i + 1) - 50, 300);
+					SelectObject(hMemDC, oldBrush);
+					DeleteObject(hBrush);
+					lf.lfHeight = 30;
+					Font = CreateFontIndirect(&lf);
+					OldFont = (HFONT)SelectObject(hMemDC, Font);
+					wsprintf(str, "Player%d", i);
+					aect = { 200 * i + 50, 300, 200 * (i + 1) - 50, 350 };
+					SetTextColor(hMemDC, RGB(0, 0, 0));
+					DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+					SelectObject(hMemDC, OldFont);
+					DeleteObject(Font);
 
-			wsprintf(str, "Clint id = %d", clnt_data.ci);
-			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+				}
 
-			aect = { rectView.right * 12 / 16, rectView.bottom * 1 / 32,
-				rectView.right * 15 / 16, rectView.bottom * 8 / 32 };
-						
-			if (parray[clnt_data.ci].life >= 0) {
-				SetTextColor(hMemDC, RGB(0, 0, 255));
-				wsprintf(str, "LIFE: %d", parray[clnt_data.ci].life);
+				lf.lfHeight = 50;
+				Font = CreateFontIndirect(&lf);
+				OldFont = (HFONT)SelectObject(hMemDC, Font);
+				wsprintf(str, "Player%d", clnt_data.ci);
+				aect = { rectView.right / 2 - 500, 500, rectView.right / 2 + 500, 600 };
+				SetTextColor(hMemDC, RGB(0, 0, 0));
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+				SelectObject(hMemDC, OldFont);
+				DeleteObject(Font);
+
+				lf.lfHeight = 30;
+				Font = CreateFontIndirect(&lf);
+				OldFont = (HFONT)SelectObject(hMemDC, Font);
+				wsprintf(str, "준비가 되면 스페이스바를 눌러주세요");
+				aect = { rectView.right / 2 - 500, 600, rectView.right / 2 + 500, 700 };
+				SetTextColor(hMemDC, RGB(0, 0, 0));
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+				SelectObject(hMemDC, OldFont);
+				DeleteObject(Font);
+				
 			}
-			else {
-				SetTextColor(hMemDC, RGB(255, 0, 0));
-				wsprintf(str, "DEATH");
-			}
-			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-			SetTextColor(hMemDC, RGB(0, 0, 0));
-
-			SelectObject(hMemDC, OldFont);
-			DeleteObject(Font);
 
 			img.Draw(hDC, 0, 0);
 			img.ReleaseDC();
@@ -373,26 +444,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		{
 			clnt_data.p_key.ARROW_RIGHT = true;
 		}
-
-		if (death == true)
+		if (wParam == VK_SPACE)
 		{
-			if (wParam == VK_RETURN)
-			{
-				SetGame(hWnd, &rectView, &tect, &sx, &sy, block, bullet, ecolor, &cx, &cy, &seta, &reload
-					, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
-					, &ten, &gametime, level, sgun, &scount, multi);
-				for (int i = 0; i < 2; i++)
-				{
-					for (int k = 0; k < 6; k++)
-						parray[i].bullet[k][0] = 0;
-				}
-
-				parray[0].cx = sx * 2;
-				parray[0].cy = sy * 4;
-
-				parray[1].cx = rectView.right - sx * 2;
-				parray[1].cy = rectView.bottom - sy * 2;
-			}
+			clnt_data.p_key.KEY_SPACEBAR = true;
 		}
 	}
 	break;
@@ -434,6 +488,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		{
 			clnt_data.p_key.ARROW_RIGHT = false;
 			clnt_data.coolTime = 0;
+		}
+		if (wParam == VK_SPACE)
+		{
+			clnt_data.p_key.KEY_SPACEBAR = false;
 		}
 		break;
 	case WM_COMMAND:

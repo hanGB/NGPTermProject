@@ -103,22 +103,6 @@ void move_player_object(float elapsedTimeInSec)
 				{
 					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
 				}
-
-				/*
-				RECT rec_player = { parray[id].cx - sx / 2, parray[id].cy - sy / 2, parray[id].cx + sx / 2, parray[id].cy + sy / 2 };
-				for (int y = 0; y < BOARD_SIZE; y++)
-				{
-					for (int x = 0; x < BOARD_SIZE; x++)
-					{
-						if (g_GameObjects.blocks[y][x] != id)
-						{
-							RECT rec_board = { sx * x ,sy * y ,sx * (x + 1),sy * (y + 1) };
-							ColRect(rec_player, rec_board, id);
-						}
-
-					}
-				}
-				*/
 				
 				int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
 				int player_AA_yidex = int((parray[id].cy + sy / 2) / (rectView.bottom / 14));

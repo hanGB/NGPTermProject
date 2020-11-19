@@ -28,6 +28,7 @@ typedef struct KeyInputs
 	bool KEY_S = false;
 	bool KEY_D = false;
 
+	bool KEY_SPACEBAR = false;
 };
 
 typedef struct CData {//서버로 보내는 데이터
@@ -51,12 +52,14 @@ typedef struct player {
 	int life = MAX_LIFE;
 	float coolTime = 0; //총알 연속 발사 쿨타임
 	float respawnTime = 0; //리스폰까지 시간
+	BOOL gameready = false;
 }player;
 
 
 typedef struct GameObjects {//서버에서 받는 데이터
 	player players[MAX_PLAYER];
 	int blocks[BOARD_SIZE][BOARD_SIZE];
+	int GameState = 1;
 }GameObjects;
 
 
