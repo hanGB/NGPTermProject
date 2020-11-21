@@ -48,6 +48,7 @@ typedef struct player {
 	double bullet[6][4] = { 0, };
 	RECT regg[6];
 	double d_effect[17] = { 0, };
+	double reffect[3] = {0, };
 	BOOL death = false;
 	int life = MAX_LIFE;
 	float coolTime = 0; //ÃÑ¾Ë ¿¬¼Ó ¹ß»ç ÄðÅ¸ÀÓ

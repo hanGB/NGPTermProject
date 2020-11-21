@@ -226,11 +226,78 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 			if (parray[i].life >= 0) 
 			{
 				parray[i].respawnTime -= elapsedTimeInSec;
-				
-				if (parray[i].respawnTime <= 0) 
+				parray[i].reffect[0] -= elapsedTimeInSec;
+				if (parray[i].respawnTime <= 0)
 				{
 					parray[i].death = false;
 					parray[i].enable = true;
+					parray[i].reffect[0] = 0;
+
+					RECT SpawnBlocks;
+
+					if (i == 0) {
+						g_GameObjects.blocks[3][1] = i;
+						g_GameObjects.blocks[3][2] = i;
+						g_GameObjects.blocks[4][1] = i;
+						g_GameObjects.blocks[4][2] = i;
+						SpawnBlocks = {BLOCK_SIZE * 1, BLOCK_SIZE * 3, BLOCK_SIZE * 3, BLOCK_SIZE * 5};
+					}
+					else if (i == 1) {
+						g_GameObjects.blocks[3][17] = i;
+						g_GameObjects.blocks[3][18] = i;
+						g_GameObjects.blocks[4][17] = i;
+						g_GameObjects.blocks[4][18] = i;
+						SpawnBlocks = { BLOCK_SIZE * 17, BLOCK_SIZE * 3, BLOCK_SIZE * 19, BLOCK_SIZE * 5 };
+					}
+					else if (i == 2) {
+						g_GameObjects.blocks[11][1] = i;
+						g_GameObjects.blocks[11][2] = i;
+						g_GameObjects.blocks[12][1] = i;
+						g_GameObjects.blocks[12][2] = i;
+						SpawnBlocks = { BLOCK_SIZE * 1, BLOCK_SIZE * 11, BLOCK_SIZE * 3, BLOCK_SIZE * 13 };
+					}
+					else if (i == 3) {
+						g_GameObjects.blocks[11][17] = i;
+						g_GameObjects.blocks[11][18] = i;
+						g_GameObjects.blocks[12][17] = i;
+						g_GameObjects.blocks[12][18] = i;
+						SpawnBlocks = { BLOCK_SIZE * 17, BLOCK_SIZE * 11, BLOCK_SIZE * 19, BLOCK_SIZE * 13 };
+					}
+
+					for (int deathid = 0; deathid < MAX_PLAYER; ++deathid) {
+						if (parray[deathid].enable == true && deathid != i)
+						{
+							RECT rec = { parray[deathid].cx - sx / 2, parray[deathid].cy - sy / 2, parray[deathid].cx + sx / 2, parray[deathid].cy + sy / 2 };
+							RECT temp;
+
+							if (IntersectRect(&temp, &SpawnBlocks, &rec)) {
+								parray[deathid].enable = false;
+								parray[deathid].death = true;
+								parray[deathid].life--;
+								parray[deathid].respawnTime = RESPAWN_TIME;
+								DeathEffect(deathid);
+
+								if (deathid == 0) {
+									parray[deathid].cx = parray[deathid].reffect[1] = 100;
+									parray[deathid].cy = parray[deathid].reffect[2] = 200;
+								}
+								else if (deathid == 1) {
+									parray[deathid].cx = parray[deathid].reffect[1] = 900;
+									parray[deathid].cy = parray[deathid].reffect[2] = 200;
+								}
+								else if (deathid == 2) {
+									parray[deathid].cx = parray[deathid].reffect[1] = 100;
+									parray[deathid].cy = parray[deathid].reffect[2] = 600;
+								}
+								else if (deathid == 3) {
+									parray[deathid].cx = parray[deathid].reffect[1] = 900;
+									parray[deathid].cy = parray[deathid].reffect[2] = 600;
+								}
+
+								parray[deathid].reffect[0] = RESPAWN_TIME;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -393,6 +460,25 @@ void CollisionBetweenBulletAndBlock()
 							parray[deathid].life--;
 							parray[deathid].respawnTime = RESPAWN_TIME;
 							DeathEffect(deathid);
+
+							if (deathid == 0) {
+								parray[deathid].cx = parray[deathid].reffect[1] = 100;
+								parray[deathid].cy = parray[deathid].reffect[2] = 200;
+							}
+							else if (deathid == 1) {
+								parray[deathid].cx = parray[deathid].reffect[1] = 900;
+								parray[deathid].cy = parray[deathid].reffect[2] = 200;
+							}
+							else if (deathid == 2) {
+								parray[deathid].cx = parray[deathid].reffect[1] = 100;
+								parray[deathid].cy = parray[deathid].reffect[2] = 600;
+							}
+							else if (deathid == 3) {
+								parray[deathid].cx = parray[deathid].reffect[1] = 900;
+								parray[deathid].cy = parray[deathid].reffect[2] = 600;
+							}
+
+							parray[deathid].reffect[0] = RESPAWN_TIME;
 						}
 					}
 				}

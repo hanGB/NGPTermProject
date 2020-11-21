@@ -87,18 +87,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			else
 				Waiting();
 
-			player temp = parray[playerid];
-			temp.nu = playerid;
-			g_GameObjects.players[playerid] = temp;
-
-			/*
 			for (int i = 0; i < MAX_PLAYER; ++i) {
 				player temp = parray[playerid];
 				temp.nu = playerid;
 
 				g_GameObjects.players[playerid] = temp;
 			}
-			*/
 		}
 		else
 		{

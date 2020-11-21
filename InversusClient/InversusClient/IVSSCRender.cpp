@@ -84,38 +84,54 @@ void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보�
 	}
 }
 
-void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double dy, double seta, int i, BOOL death, double bullet[][4], HBRUSH oldBrush, HBRUSH hBrush, HBRUSH eBrush, HDC hMemDC)
-{//총알 회전
-	rx[i] = dx / 3 * cos(seta + i) + cx;
-	ry[i] = dy / 3 * sin(seta + i) + cy;
-	if (death == false)
-	{
-		if (bullet[i][0] == 1)
-			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-		else
-			oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-		Ellipse(hMemDC, rx[i] - dx / 10, ry[i] - dx / 10, rx[i] + dx / 10, ry[i] + dx / 10);
-	}
-}
-
-void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRUSH eBrush, HPEN cPen, HPEN ePen, HDC hMemDC, double dx, double dy, double reffect[][4])
+void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 {//부활 이펙트
-	for (int i = 0; i < LIMIT_ENEMY; i++)
+	HPEN hPen, oldPen;
+	HBRUSH hBrush, oldBrush;
+
+	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
-		//부활 이펙트
-		if (reffect[i][0] > 0)
-		{
-			if (reffect[i][3] == -1)
-				OldPen = (HPEN)SelectObject(hMemDC, cPen);
-			else
-				OldPen = (HPEN)SelectObject(hMemDC, ePen);
-			oldBrush = (HBRUSH)SelectObject(hMemDC, unBrush);
-			Rectangle(hMemDC, reffect[i][1] - dx / 2 - reffect[i][0], reffect[i][2] - dy / 2 - reffect[i][0], reffect[i][1] + dx / 2 + reffect[i][0], reffect[i][2] + dy / 2 + reffect[i][0]);
-			if (reffect[i][3] == -1)
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush2);
-			else
-				oldBrush = (HBRUSH)SelectObject(hMemDC, eBrush);
-			Rectangle(hMemDC, reffect[i][1] - dx / 2 + reffect[i][0], reffect[i][2] - dy / 2 + reffect[i][0], reffect[i][1] + dx / 2 - reffect[i][0], reffect[i][2] + dy / 2 - reffect[i][0]);
+		if (parray[id].enable) {
+			//부활 이펙트
+			if (parray[id].reffect[0] > 0)
+			{
+				if (parray[id].nu == clnt_data.ci) {
+					hPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
+					oldPen = (HPEN)SelectObject(hMemDC, hPen);
+				}
+				else {
+					hPen = CreatePen(PS_SOLID, 3, RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+					oldPen = (HPEN)SelectObject(hMemDC, hPen);
+				}
+				hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);//투명
+				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+
+				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 - parray[id].reffect[0] * 100,
+					parray[id].reffect[2] - dy / 2 - parray[id].reffect[0] * 100,
+					parray[id].reffect[1] + dx / 2 + parray[id].reffect[0] * 100,
+					parray[id].reffect[2] + dy / 2 + parray[id].reffect[0] * 100);
+
+				SelectObject(hMemDC, oldBrush);
+				DeleteObject(hBrush);
+
+				if (parray[id].nu == clnt_data.ci) {
+					hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+				}
+				else {
+					hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+				}
+				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 + parray[id].reffect[0] * 100,
+					parray[id].reffect[2] - dy / 2 + parray[id].reffect[0] * 100,
+					parray[id].reffect[1] + dx / 2 - parray[id].reffect[0] * 100,
+					parray[id].reffect[2] + dy / 2 - parray[id].reffect[0] * 100);
+
+				SelectObject(hMemDC, oldBrush);
+				DeleteObject(hBrush);
+				SelectObject(hMemDC, oldPen);
+				DeleteObject(hPen);
+			}
 		}
 	}
 }

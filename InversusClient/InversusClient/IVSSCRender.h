@@ -9,13 +9,8 @@ void Hcreateboad(int block[][20], double dx, double dy, HDC hMemDC);
 //보드판 위에 특수총알
 void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC);
 
-//총알 회전
-void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double dy, double seta, int i, BOOL death,
-	double bullet[][4], HBRUSH oldBrush, HBRUSH hBrush, HBRUSH eBrush, HDC hMemDC);
-
 //부활 이펙트
-void Hrespwan(HPEN OldPen, HBRUSH oldBrush, HBRUSH unBrush, HBRUSH hBrush2, HBRUSH eBrush, 
-	HPEN cPen, HPEN ePen, HDC hMemDC, double dx, double dy, double reffect[][4]);
+void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy);
 
 //데스이펙트
 void Hdeatheffect(HDC hMemDC, int* ecolor);

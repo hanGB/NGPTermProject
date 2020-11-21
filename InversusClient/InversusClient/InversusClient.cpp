@@ -199,24 +199,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 		HFONT Font, OldFont;
 		HPEN hPen, OldPen;
 
-		/*
-		HBRUSH eBrush, eBrush2, ehBrush, unBrush, hBrush2, hBrush3, oldBrush2;
-		HPEN MyPen, ePen, OldPen, cPen, unPen, iPen;
-
-		MyPen = CreatePen(PS_SOLID, 3, RGB(125, 125, 125));//보드
-		ePen = CreatePen(PS_SOLID, 3, RGB(ecolor[0], ecolor[1], ecolor[2]));//적
-		cPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
-		iPen = CreatePen(PS_SOLID, 3, RGB(255, 0, 0));//무적 주인공
-		unPen = (HPEN)GetStockObject(NULL_BRUSH);//투명
-
-		unBrush = (HBRUSH)GetStockObject(NULL_BRUSH);//투명
-		hBrush = CreateSolidBrush(RGB(255, 255, 255));//흰색
-		hBrush2 = CreateSolidBrush(RGB(0, 0, 0));//검정
-		hBrush3 = CreateSolidBrush(RGB(125, 125, 125));//검정
-		eBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
-		eBrush2 = CreateSolidBrush(RGB(200, 10, 10));
-		ehBrush = CreateHatchBrush(HS_BDIAGONAL, RGB(ecolor[0], ecolor[1], ecolor[2]));//적 빗금
-		*/
 		hMemDC = img.GetDC();
 		{
 			//-------------------------------------------------------
@@ -277,6 +259,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				}
 				//사망이펙트
 				Hdeatheffect(hMemDC, ecolor);
+
+				// 부활 이펙트
+				Hrespwan(hMemDC, ecolor, sx, sy);
 
 				Font = CreateFontIndirect(&lf);
 				OldFont = (HFONT)SelectObject(hMemDC, Font);
