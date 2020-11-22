@@ -61,6 +61,7 @@ typedef struct GameObjects {//서버에서 받는 데이터
 	player players[MAX_PLAYER];
 	int blocks[BOARD_SIZE][BOARD_SIZE];
 	int GameState = 1;
+	float time = 0;
 }GameObjects;
 
 

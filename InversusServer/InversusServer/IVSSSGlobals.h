@@ -58,6 +58,7 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 	player players[MAX_PLAYER];
 	int blocks[BOARD_SIZE][BOARD_SIZE];
 	int GameState = 1; //0은 로비 1은 게임
+	float time = 0;
 }GameObjects;
 
 
@@ -78,3 +79,5 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 #define BLOCK_SIZE 50
 
 #define RESPAWN_TIME 3
+
+#define RESPAWN_EFFECT_TIME 2

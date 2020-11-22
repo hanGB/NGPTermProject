@@ -149,7 +149,6 @@
     <ClInclude Include="IVSSCNetwork.h" />
     <ClInclude Include="IVSSCGlobals.h" />
     <ClInclude Include="IVSSCRender.h" />
-    <ClInclude Include="IVSSCUpdate.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -165,7 +164,6 @@
     </ClCompile>
     <ClCompile Include="IVSSCGame.cpp" />
     <ClCompile Include="IVSSCRender.cpp" />
-    <ClCompile Include="IVSSCUpdate.cpp" />
     <ClCompile Include="IVSSCNetwork.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

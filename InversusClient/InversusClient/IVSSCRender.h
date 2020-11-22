@@ -19,6 +19,9 @@ void Hdeatheffect(HDC hMemDC, int* ecolor);
 void Hscorebord(HDC hMemDC, RECT rectView, double dx, double dy, int life, 
 	char* str, int score, int combo, RECT tect, LOGFONT* lf, BOOL multi);
 
+//총알 나가는거 생성
+void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch);
+
 //일대일 승패 메세지
 void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd);
 

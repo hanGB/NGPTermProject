@@ -27,9 +27,6 @@
     <ClInclude Include="IVSSCRender.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="IVSSCUpdate.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="IVSSCGlobals.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -53,9 +50,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="IVSSCRender.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="IVSSCUpdate.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="IVSSCNetwork.cpp">

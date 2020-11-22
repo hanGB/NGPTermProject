@@ -20,6 +20,8 @@ void Update(float elapsedTimeInSec)
 	move_bullet_object(elapsedTimeInSec);
 	HandleDeathPlayer(elapsedTimeInSec);
 	CollisionBetweenBulletAndBlock();
+
+	g_GameObjects.time += elapsedTimeInSec;
 }
 
 
@@ -275,6 +277,7 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 								parray[deathid].death = true;
 								parray[deathid].life--;
 								parray[deathid].respawnTime = RESPAWN_TIME;
+								parray[deathid].reffect[0] = RESPAWN_EFFECT_TIME;
 								DeathEffect(deathid);
 
 								if (deathid == 0) {
@@ -293,9 +296,6 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 									parray[deathid].cx = parray[deathid].reffect[1] = 900;
 									parray[deathid].cy = parray[deathid].reffect[2] = 600;
 								}
-
-								if(parray[deathid].life > 0)
-									parray[deathid].reffect[0] = RESPAWN_TIME;
 							}
 						}
 					}

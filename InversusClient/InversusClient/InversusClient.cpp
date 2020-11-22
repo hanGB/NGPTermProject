@@ -6,7 +6,6 @@
 #include "IVSSCNetwork.h"
 #include "IVSSCGlobals.h"
 #include "IVSSCGame.h"
-#include "IVSSCUpdate.h"
 #include "IVSSCRender.h"
 
 HINSTANCE g_hinst;
@@ -224,6 +223,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							Rectangle(hMemDC, parray[i].cx - sx / 2, parray[i].cy - sy / 2, parray[i].cx + sx / 2, parray[i].cy + sy / 2);
 							SelectObject(hMemDC, oldBrush);
 							DeleteObject(hBrush);
+
+							lf.lfHeight = 20;
+							lf.lfWeight = 800;
+
+							Font = CreateFontIndirect(&lf);
+							OldFont = (HFONT)SelectObject(hMemDC, Font);
+
+							SetBkColor(hMemDC, RGB(255, 255, 255));
+							RECT aect = { parray[i].cx - 45,  parray[i].cy + 30,
+								parray[i].cx + 45, parray[i].cy + 50};
+
+							wsprintf(str, " client id: %d ", i);
+							DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+
+							SelectObject(hMemDC, OldFont);
+							DeleteObject(Font);
 						}
 					}
 					//√—æÀ
@@ -263,17 +278,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				// ∫Œ»∞ ¿Ã∆Â∆Æ
 				Hrespwan(hMemDC, ecolor, sx, sy);
 
+				lf.lfHeight = sx;
+				lf.lfWeight = 0;
+
 				Font = CreateFontIndirect(&lf);
 				OldFont = (HFONT)SelectObject(hMemDC, Font);
 
 				SetBkColor(hMemDC, RGB(255, 255, 255));
-				RECT aect = { rectView.right * 3 / 32, rectView.bottom * 1 / 16,
-					rectView.right * 15 / 32, rectView.bottom * 3 / 16 };
-
-				wsprintf(str, "Clint id = %d", clnt_data.ci);
-				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-
-				aect = { rectView.right * 12 / 16, rectView.bottom * 1 / 32,
+				RECT aect = { rectView.right * 12 / 16, rectView.bottom * 1 / 32,
 					rectView.right * 15 / 16, rectView.bottom * 8 / 32 };
 
 				if (parray[clnt_data.ci].life >= 0) {
@@ -286,6 +298,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				}
 				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 				SetTextColor(hMemDC, RGB(0, 0, 0));
+
+				aect = { rectView.right * 5 / 16, rectView.bottom * 1 / 32,
+					rectView.right * 11 / 16, rectView.bottom * 8 / 32 };
+
+				wsprintf(str, "TIME: %d√  %d", (int)g_GameObjects.time, ((int)(g_GameObjects.time * 100) % 100));
+
+				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
 				SelectObject(hMemDC, OldFont);
 				DeleteObject(Font);

@@ -92,45 +92,47 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
 		if (parray[id].death) {
-			//부활 이펙트
-			if (parray[id].reffect[0] > 0)
-			{
-				if (parray[id].nu == clnt_data.ci) {
-					hPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
-					oldPen = (HPEN)SelectObject(hMemDC, hPen);
-				}
-				else {
-					hPen = CreatePen(PS_SOLID, 3, RGB(ecolor[0], ecolor[1], ecolor[2]));//적
-					oldPen = (HPEN)SelectObject(hMemDC, hPen);
-				}
-				hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);//투명
-				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-
-				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 - parray[id].reffect[0] * 30,
-					parray[id].reffect[2] - dy / 2 - parray[id].reffect[0] * 30,
-					parray[id].reffect[1] + dx / 2 + parray[id].reffect[0] * 30,
-					parray[id].reffect[2] + dy / 2 + parray[id].reffect[0] * 30);
-
-				SelectObject(hMemDC, oldBrush);
-				DeleteObject(hBrush);
-
-				if (parray[id].nu == clnt_data.ci) {
-					hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+			if (parray[id].life >= 0) {
+				//부활 이펙트
+				if (parray[id].reffect[0] > 0)
+				{
+					if (parray[id].nu == clnt_data.ci) {
+						hPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
+						oldPen = (HPEN)SelectObject(hMemDC, hPen);
+					}
+					else {
+						hPen = CreatePen(PS_SOLID, 3, RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+						oldPen = (HPEN)SelectObject(hMemDC, hPen);
+					}
+					hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);//투명
 					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-				}
-				else {
-					hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
-					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-				}
-				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 + parray[id].reffect[0] * 30,
-					parray[id].reffect[2] - dy / 2 + parray[id].reffect[0] * 30,
-					parray[id].reffect[1] + dx / 2 - parray[id].reffect[0] * 30,
-					parray[id].reffect[2] + dy / 2 - parray[id].reffect[0] * 30);
 
-				SelectObject(hMemDC, oldBrush);
-				DeleteObject(hBrush);
-				SelectObject(hMemDC, oldPen);
-				DeleteObject(hPen);
+					Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 - parray[id].reffect[0] * 30,
+						parray[id].reffect[2] - dy / 2 - parray[id].reffect[0] * 30,
+						parray[id].reffect[1] + dx / 2 + parray[id].reffect[0] * 30,
+						parray[id].reffect[2] + dy / 2 + parray[id].reffect[0] * 30);
+
+					SelectObject(hMemDC, oldBrush);
+					DeleteObject(hBrush);
+
+					if (parray[id].nu == clnt_data.ci) {
+						hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					}
+					else {
+						hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					}
+					Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 + parray[id].reffect[0] * 30,
+						parray[id].reffect[2] - dy / 2 + parray[id].reffect[0] * 30,
+						parray[id].reffect[1] + dx / 2 - parray[id].reffect[0] * 30,
+						parray[id].reffect[2] + dy / 2 - parray[id].reffect[0] * 30);
+
+					SelectObject(hMemDC, oldBrush);		
+					DeleteObject(hBrush);
+					SelectObject(hMemDC, oldPen);
+					DeleteObject(hPen);
+				}
 			}
 		}
 	}
@@ -206,4 +208,114 @@ void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd)//게임
 	wsprintf(str, "Game Over\n%d\nPress Enter key to reset game", score);
 	DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 	KillTimer(hWnd, 1);
+}
+
+void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch)
+{//총알 나가는거 생성
+	if (bullet[i][3] == 0 || bullet[i][3] == 1)
+	{
+		if (check == 0)
+		{
+			regg[i].left = bullet[i][1] - 50;
+			regg[i].top = bullet[i][2] - 5;
+			regg[i].right = bullet[i][1] + 50;
+			regg[i].bottom = bullet[i][2] + 5;
+			if (ch == 0)
+			{
+				if (bullet[i][3] == 0)
+					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], TRUE);
+				else
+					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], TRUE);
+			}
+			else
+			{
+				if (bullet[i][3] == 0)
+					DrawGr(hMemDC, RGB(20, 20, 20), RGB(255, 255, 255), regg[i], TRUE);
+				else
+					DrawGr(hMemDC, RGB(255, 255, 255), RGB(20, 20, 20), regg[i], TRUE);
+			}
+		}
+		else
+		{
+			regg[3 * i].left = bullet[i][1] - 50;
+			regg[3 * i].top = bullet[i][2] - 5;
+			regg[3 * i].right = bullet[i][1] + 50;
+			regg[3 * i].bottom = bullet[i][2] + 5;
+
+			regg[3 * i + 1].left = bullet[i][1] - 50;
+			regg[3 * i + 1].top = bullet[i][2] + 45;
+			regg[3 * i + 1].right = bullet[i][1] + 50;
+			regg[3 * i + 1].bottom = bullet[i][2] + 55;
+
+			regg[3 * i + 2].left = bullet[i][1] - 50;
+			regg[3 * i + 2].top = bullet[i][2] - 55;
+			regg[3 * i + 2].right = bullet[i][1] + 50;
+			regg[3 * i + 2].bottom = bullet[i][2] - 45;
+			if (bullet[i][3] == 0)
+			{
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i], TRUE);
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 1], TRUE);
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 2], TRUE);
+			}
+			else
+			{
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i], TRUE);
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 1], TRUE);
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 2], TRUE);
+			}
+		}
+	}
+	else
+	{
+		if (check == 0)
+		{
+			regg[i].left = bullet[i][1] - 5;
+			regg[i].top = bullet[i][2] - 50;
+			regg[i].right = bullet[i][1] + 5;
+			regg[i].bottom = bullet[i][2] + 50;
+			if (ch == 0)
+			{
+				if (bullet[i][3] == 2)
+					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], FALSE);
+				else
+					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], FALSE);
+			}
+			else
+			{
+				if (bullet[i][3] == 2)
+					DrawGr(hMemDC, RGB(255, 255, 255), RGB(20, 20, 20), regg[i], FALSE);
+				else
+					DrawGr(hMemDC, RGB(20, 20, 20), RGB(255, 255, 255), regg[i], FALSE);
+			}
+		}
+		else
+		{
+			regg[3 * i].left = bullet[i][1] - 5;
+			regg[3 * i].top = bullet[i][2] - 50;
+			regg[3 * i].right = bullet[i][1] + 5;
+			regg[3 * i].bottom = bullet[i][2] + 50;
+
+			regg[3 * i + 1].left = bullet[i][1] + 45;
+			regg[3 * i + 1].top = bullet[i][2] - 50;
+			regg[3 * i + 1].right = bullet[i][1] + 55;
+			regg[3 * i + 1].bottom = bullet[i][2] + 50;
+
+			regg[3 * i + 2].left = bullet[i][1] - 55;
+			regg[3 * i + 2].top = bullet[i][2] - 50;
+			regg[3 * i + 2].right = bullet[i][1] - 45;
+			regg[3 * i + 2].bottom = bullet[i][2] + 50;
+			if (bullet[i][3] == 2)
+			{
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i], FALSE);
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 1], FALSE);
+				DrawGr(hMemDC, RGB(ecolor[0], ecolor[1], ecolor[2]), RGB(255, 255, 255), regg[3 * i + 2], FALSE);
+			}
+			else
+			{
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i], FALSE);
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 1], FALSE);
+				DrawGr(hMemDC, RGB(255, 255, 255), RGB(ecolor[0], ecolor[1], ecolor[2]), regg[3 * i + 2], FALSE);
+			}
+		}
+	}
 }
