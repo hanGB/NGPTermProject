@@ -91,7 +91,7 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 
 	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
-		if (parray[id].enable) {
+		if (parray[id].death) {
 			//부활 이펙트
 			if (parray[id].reffect[0] > 0)
 			{
@@ -106,10 +106,10 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 				hBrush = (HBRUSH)GetStockObject(NULL_BRUSH);//투명
 				oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 
-				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 - parray[id].reffect[0] * 100,
-					parray[id].reffect[2] - dy / 2 - parray[id].reffect[0] * 100,
-					parray[id].reffect[1] + dx / 2 + parray[id].reffect[0] * 100,
-					parray[id].reffect[2] + dy / 2 + parray[id].reffect[0] * 100);
+				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 - parray[id].reffect[0] * 30,
+					parray[id].reffect[2] - dy / 2 - parray[id].reffect[0] * 30,
+					parray[id].reffect[1] + dx / 2 + parray[id].reffect[0] * 30,
+					parray[id].reffect[2] + dy / 2 + parray[id].reffect[0] * 30);
 
 				SelectObject(hMemDC, oldBrush);
 				DeleteObject(hBrush);
@@ -122,10 +122,10 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 					hBrush = CreateSolidBrush(RGB(ecolor[0], ecolor[1], ecolor[2]));//적
 					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 				}
-				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 + parray[id].reffect[0] * 100,
-					parray[id].reffect[2] - dy / 2 + parray[id].reffect[0] * 100,
-					parray[id].reffect[1] + dx / 2 - parray[id].reffect[0] * 100,
-					parray[id].reffect[2] + dy / 2 - parray[id].reffect[0] * 100);
+				Rectangle(hMemDC, parray[id].reffect[1] - dx / 2 + parray[id].reffect[0] * 30,
+					parray[id].reffect[2] - dy / 2 + parray[id].reffect[0] * 30,
+					parray[id].reffect[1] + dx / 2 - parray[id].reffect[0] * 30,
+					parray[id].reffect[2] + dy / 2 - parray[id].reffect[0] * 30);
 
 				SelectObject(hMemDC, oldBrush);
 				DeleteObject(hBrush);
