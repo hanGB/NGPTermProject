@@ -27,3 +27,5 @@ void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd);
 
 //게임 오버 메세지
 void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd);
+
+void DrawGameWin(HDC hMemDC, RECT rectView);

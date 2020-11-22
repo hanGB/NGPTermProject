@@ -62,6 +62,8 @@ typedef struct GameObjects {//서버에서 받는 데이터
 	int blocks[BOARD_SIZE][BOARD_SIZE];
 	int GameState = 1;
 	float time = 0;
+	bool gameEnd = false;
+	int winPlayer = -1;
 }GameObjects;
 
 
@@ -74,3 +76,5 @@ typedef struct GameObjects {//서버에서 받는 데이터
 #define LIMIT_EFFECT 2
 
 #define KEYUP(vk_code) ((GetAsyncKeyState(vk_code)) ? 0 : 1)
+
+#define DRAW 100

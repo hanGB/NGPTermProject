@@ -4,6 +4,7 @@
 
 extern CData clnt_data;
 extern player parray[MAX_PLAYER];
+extern GameObjects g_GameObjects;
 
 void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//그라데이션
 {
@@ -208,6 +209,46 @@ void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd)//게임
 	wsprintf(str, "Game Over\n%d\nPress Enter key to reset game", score);
 	DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 	KillTimer(hWnd, 1);
+}
+
+void DrawGameWin(HDC hMemDC, RECT rectView)
+{
+	HFONT hFont, OldFont;
+	LOGFONT lf;
+
+	lf.lfHeight = 50;
+	lf.lfWeight = FW_NORMAL;
+
+	char str[120];
+
+	hFont = CreateFontIndirect(&lf);
+	OldFont = (HFONT)SelectObject(hMemDC, hFont);
+
+	SetTextColor(hMemDC, RGB(255, 255, 255));
+	RECT aect = { rectView.right * 4 / 16, rectView.bottom * 6 / 16,
+		rectView.right * 12 / 16, rectView.bottom * 10 / 16 };
+
+	if (g_GameObjects.gameEnd) {
+		if (g_GameObjects.winPlayer == clnt_data.ci) {
+			SetBkColor(hMemDC, RGB(0, 0, 255));
+			wsprintf(str, "YOU WIN!\n WIN Client ID: %d", g_GameObjects.winPlayer);
+		}
+		else if (g_GameObjects.winPlayer == DRAW) {
+			SetBkColor(hMemDC, RGB(0, 255, 0));
+			wsprintf(str, "DRAW");
+		}
+		else {
+			SetBkColor(hMemDC, RGB(255, 0, 0));
+			wsprintf(str, "YOU LOSE!\n WIN Client ID: %d", g_GameObjects.winPlayer);
+		}
+		DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+	}
+
+	SetBkColor(hMemDC, RGB(255, 255, 255));
+	SetTextColor(hMemDC, RGB(0, 0, 0));
+
+	SelectObject(hMemDC, OldFont);
+	DeleteObject(hFont);
 }
 
 void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch)

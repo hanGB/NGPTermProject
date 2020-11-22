@@ -20,10 +20,11 @@ void Update(float elapsedTimeInSec)
 	move_bullet_object(elapsedTimeInSec);
 	HandleDeathPlayer(elapsedTimeInSec);
 	CollisionBetweenBulletAndBlock();
+	GameEndCheck();
 
-	g_GameObjects.time += elapsedTimeInSec;
+	if (!g_GameObjects.gameEnd)
+		g_GameObjects.time += elapsedTimeInSec;
 }
-
 
 void ColRect(RECT rec, RECT& rec2,int id)//검은벽 움직이지 못하게
 {
@@ -621,6 +622,78 @@ void Trespawneffect(double reffect[][4], int gametime, BOOL* death, double enemy
 					enemy[(int)reffect[i][3]][0] = 1;
 				}
 				reffect[i][0] = -1;
+			}
+		}
+	}
+}
+
+void GameEndCheck()
+{
+	int check[] = {-2, -2, -2, -2}; // -2: 없음, -1: 죽음, 0이상: 남은 목숨 수
+
+	int enablePlayerNum = 0;
+	int maxLife = -1;
+	int winPlayerNum = 0;
+
+	int maxBlockNum = -1;
+
+	if (!g_GameObjects.gameEnd) {
+		if (g_GameObjects.time > 180) {
+			g_GameObjects.gameEnd = true;
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				if (parray[i].enable || parray[i].death) {
+					if (parray[i].life > maxLife)
+						maxLife = parray[i].life;
+				}
+			}
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				if (parray[i].enable || parray[i].death) {
+					if (parray[i].life == maxLife) {
+						g_GameObjects.winPlayer = i;
+						winPlayerNum++;
+					}
+				}
+				if (winPlayerNum >= 2) {
+					if (parray[i].enable || parray[i].death) {
+						if (parray[i].life == maxLife) {
+							int blockNum = 0;
+
+							for (int x = 0; x < BOARD_SIZE; ++i) {
+								for (int y = 0; y < BOARD_SIZE; ++i) {
+									if (g_GameObjects.blocks[y][x] == i)
+										blockNum++;
+								}
+							}
+
+							if (blockNum > maxBlockNum) {
+								maxBlockNum = blockNum;
+								g_GameObjects.winPlayer = i;
+							}
+							else if (blockNum == maxBlockNum) {
+								g_GameObjects.winPlayer = DRAW;
+							}
+						}
+					}
+				}
+			}
+
+		}
+		else {
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+
+				if (parray[i].enable || parray[i].death) {
+					if (parray[i].life >= 0) {
+						enablePlayerNum++;
+					}
+				}
+			}
+			if (enablePlayerNum == 1) {
+				for (int i = 0; i < MAX_PLAYER; ++i) {
+					if (parray[i].enable) {
+						g_GameObjects.gameEnd = true;
+						g_GameObjects.winPlayer = i;
+					}
+				}
 			}
 		}
 	}

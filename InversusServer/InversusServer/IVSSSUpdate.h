@@ -48,3 +48,6 @@ void RespawnEffect(double reffect[][4], double x, double y, int nu);
 
 //리스폰이펙타임 
 void Trespawneffect(double reffect[][4], int gametime, BOOL* death, double enemy[][5]);
+
+//게임 종료 체크 및 승리 플레이어 선정
+void GameEndCheck();

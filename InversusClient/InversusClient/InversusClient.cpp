@@ -279,7 +279,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				Hrespwan(hMemDC, ecolor, sx, sy);
 
 				lf.lfHeight = sx;
-				lf.lfWeight = 0;
+				lf.lfWeight = FW_NORMAL;
 
 				Font = CreateFontIndirect(&lf);
 				OldFont = (HFONT)SelectObject(hMemDC, Font);
@@ -302,13 +302,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				aect = { rectView.right * 5 / 16, rectView.bottom * 1 / 32,
 					rectView.right * 11 / 16, rectView.bottom * 8 / 32 };
 
+				if (g_GameObjects.time > 150)
+					SetTextColor(hMemDC, RGB(255, 0, 0));
+
 				wsprintf(str, "TIME: %d√  %d", (int)g_GameObjects.time, ((int)(g_GameObjects.time * 100) % 100));
 
 				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
 				SelectObject(hMemDC, OldFont);
 				DeleteObject(Font);
-				
+
+				DrawGameWin(hMemDC, rectView);
+
+				SetTextColor(hMemDC, RGB(0, 0, 0));
 			}
 			else
 			{
