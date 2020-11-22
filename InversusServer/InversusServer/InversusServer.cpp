@@ -107,7 +107,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
 
 	//게임 오브젝트 초기화
 	ZeroMemory(&g_GameObjects, sizeof(GameObjects));
-	g_GameObjects.GameState = 1;
+	g_GameObjects.GameState = 0;
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		clnt_data[i].ci = NON_PLAYER;
 	}
@@ -263,68 +263,93 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			lf.lfHeight = 50;
 			Font = CreateFontIndirect(&lf);
 			OldFont = (HFONT)SelectObject(hMemDC, Font);
-			wsprintf(str, "Inversus Waiting Room");
+			wsprintf(str, "Inversus Server");
 			RECT aect = { rectView.right/2 - 500, 50, rectView.right / 2 + 500, 250 };
 			SetTextColor(hMemDC, RGB(0, 0, 0));
 			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 			SelectObject(hMemDC, OldFont);
 			DeleteObject(Font);
 
-			for (int i = 0; i < MAX_PLAYER; i++)
+			if (g_GameObjects.GameState == 0)
 			{
-				if (parray[i].enable == true)
+				for (int i = 0; i < MAX_PLAYER; i++)
 				{
-					hBrush = CreateSolidBrush(RGB(200, 10, 10));
-					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					if (parray[i].enable == true)
+					{
+						hBrush = CreateSolidBrush(RGB(200, 10, 10));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+						if (parray[i].gameready == true)
+						{
+							lf.lfHeight = 30;
+							Font = CreateFontIndirect(&lf);
+							OldFont = (HFONT)SelectObject(hMemDC, Font);
+							wsprintf(str, "READY");
+							aect = { 200 * i + 50, 350, 200 * (i + 1) - 50, 400 };
+							SetTextColor(hMemDC, RGB(255, 0, 0));
+							DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+							SelectObject(hMemDC, OldFont);
+							DeleteObject(Font);
+						}
+					}
+					else
+					{
+						hBrush = CreateSolidBrush(RGB(125, 125, 125));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					}
+					Rectangle(hMemDC, 200 * i + 50, 200, 200 * (i + 1) - 50, 300);
+					SelectObject(hMemDC, oldBrush);
+					DeleteObject(hBrush);
+					lf.lfHeight = 30;
+					Font = CreateFontIndirect(&lf);
+					OldFont = (HFONT)SelectObject(hMemDC, Font);
+					wsprintf(str, "Player%d", i);
+					aect = { 200 * i + 50, 300, 200 * (i + 1) - 50, 350 };
+					SetTextColor(hMemDC, RGB(0, 0, 0));
+					DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+					SelectObject(hMemDC, OldFont);
+					DeleteObject(Font);
 				}
-				else
-				{
-					hBrush = CreateSolidBrush(RGB(125, 125, 125));
-					oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
-				}
-				Rectangle(hMemDC, 200 * i +50, 200, 200 * (i+1) -50, 300);
-				SelectObject(hMemDC, oldBrush);
-				DeleteObject(hBrush);
-				lf.lfHeight = 30;
-				Font = CreateFontIndirect(&lf);
-				OldFont = (HFONT)SelectObject(hMemDC, Font);
-				wsprintf(str, "Player%d", i);
-				aect = { 200 * i + 50, 300, 200 * (i + 1) - 50, 350 };
-				SetTextColor(hMemDC, RGB(0, 0, 0));
-				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-				SelectObject(hMemDC, OldFont);
-				DeleteObject(Font);
-
-				Font = CreateFontIndirect(&lf);
-				OldFont = (HFONT)SelectObject(hMemDC, Font);
-				wsprintf(str, "READY");
-				aect = { 200 * i + 50, 350, 200 * (i + 1) - 50, 400 };
-				SetTextColor(hMemDC, RGB(255, 0, 0));
-				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-				SelectObject(hMemDC, OldFont);
-				DeleteObject(Font);
-
 			}
-
-			lf.lfHeight = 50;
-			Font = CreateFontIndirect(&lf);
-			OldFont = (HFONT)SelectObject(hMemDC, Font);
-			wsprintf(str, "Player1");
-			aect = { rectView.right / 2 - 500, 500, rectView.right / 2 + 500, 600 };
-			SetTextColor(hMemDC, RGB(0, 0, 0));
-			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-			SelectObject(hMemDC, OldFont);
-			DeleteObject(Font);
-
-			lf.lfHeight = 30;
-			Font = CreateFontIndirect(&lf);
-			OldFont = (HFONT)SelectObject(hMemDC, Font);
-			wsprintf(str, "준비가 되면 스페이스바를 눌러주세요");
-			aect = { rectView.right / 2 - 500, 600, rectView.right / 2 + 500, 700 };
-			SetTextColor(hMemDC, RGB(0, 0, 0));
-			DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-			SelectObject(hMemDC, OldFont);
-			DeleteObject(Font);
+			else
+			{
+				for (int i = 0; i < MAX_PLAYER; i++)
+				{
+					if (parray[i].enable == true)
+					{
+						hBrush = CreateSolidBrush(RGB(200, 10, 10));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+						if (parray[i].gameready == true)
+						{
+							lf.lfHeight = 30;
+							Font = CreateFontIndirect(&lf);
+							OldFont = (HFONT)SelectObject(hMemDC, Font);
+							wsprintf(str, "LIFE: %d", parray[i].life);
+							aect = { 200 * i + 50, 350, 200 * (i + 1) - 50, 400 };
+							SetTextColor(hMemDC, RGB(255, 0, 0));
+							DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+							SelectObject(hMemDC, OldFont);
+							DeleteObject(Font);
+						}
+					}
+					else
+					{
+						hBrush = CreateSolidBrush(RGB(125, 125, 125));
+						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
+					}
+					Rectangle(hMemDC, 200 * i + 50, 200, 200 * (i + 1) - 50, 300);
+					SelectObject(hMemDC, oldBrush);
+					DeleteObject(hBrush);
+					lf.lfHeight = 30;
+					Font = CreateFontIndirect(&lf);
+					OldFont = (HFONT)SelectObject(hMemDC, Font);
+					wsprintf(str, "Player%d", i);
+					aect = { 200 * i + 50, 300, 200 * (i + 1) - 50, 350 };
+					SetTextColor(hMemDC, RGB(0, 0, 0));
+					DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+					SelectObject(hMemDC, OldFont);
+					DeleteObject(Font);
+				}
+			}
 
 			img.Draw(hDC, 0, 0);
 			img.ReleaseDC();
@@ -335,45 +360,51 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	case WM_TIMER: // 시간이 경과하면 메시지 자동 생성
 		switch (wParam) {
 		case 1:
-			if (seta < 2 * 3.14)
+			if (g_GameObjects.GameState == 1)
 			{
-				seta += 0.3;
-			}
-			else
-			{
-				seta = 0;
-			}
-
-			if (reload < 30)
-			{
-				reload++;
-			}
-			else
-			{
-				for (int j = 0; j < clientCount; j++)
+				if (seta < 2 * 3.14)
 				{
-					for (int i = 0; i < 6; i++)
+					seta += 0.3;
+				}
+				else
+				{
+					seta = 0;
+				}
+
+				if (reload < 30)
+				{
+					reload++;
+				}
+				else
+				{
+					for (int j = 0; j < MAX_PLAYER; j++)
 					{
-						if (parray[j].bullet[i][0] == 0)
+						if (parray[j].enable)
 						{
-							parray[j].bullet[i][0] = 1;
-							break;
+							for (int i = 0; i < 6; i++)
+							{
+								if (parray[j].bullet[i][0] == 0)
+								{
+									parray[j].bullet[i][0] = 1;
+									break;
+								}
+							}
 						}
 					}
+					reload = 0;
 				}
-				reload = 0;
-			}
 
-			Tdetaheffect();
+				Tdetaheffect();
 
-			if (ten < 10)//1초
-			{
-				ten++;
-			}
-			else
-			{
-				ten = 0;
-				gametime++;
+				if (ten < 10)//1초
+				{
+					ten++;
+				}
+				else
+				{
+					ten = 0;
+					gametime++;
+				}
 			}
 			break;
 		case 2:

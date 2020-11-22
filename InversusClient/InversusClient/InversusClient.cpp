@@ -318,6 +318,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 						if (parray[i].gameready == true)
 						{
+							lf.lfHeight = 30;
 							Font = CreateFontIndirect(&lf);
 							OldFont = (HFONT)SelectObject(hMemDC, Font);
 							wsprintf(str, "READY");

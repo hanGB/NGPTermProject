@@ -54,6 +54,10 @@ DWORD WINAPI RecvMsg(LPVOID arg) {
 			memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
 			clnt_data.coolTime = g_GameObjects.players[clnt_data.ci].coolTime;
 		}
+		else
+		{
+			exit(0);
+		}
 	}
 	return 0;
 }

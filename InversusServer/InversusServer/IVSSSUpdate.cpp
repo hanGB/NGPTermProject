@@ -294,7 +294,8 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 									parray[deathid].cy = parray[deathid].reffect[2] = 600;
 								}
 
-								parray[deathid].reffect[0] = RESPAWN_TIME;
+								if(parray[deathid].life > 0)
+									parray[deathid].reffect[0] = RESPAWN_TIME;
 							}
 						}
 					}
@@ -478,7 +479,8 @@ void CollisionBetweenBulletAndBlock()
 								parray[deathid].cy = parray[deathid].reffect[2] = 600;
 							}
 
-							parray[deathid].reffect[0] = RESPAWN_TIME;
+							if (parray[deathid].life > 0)
+								parray[deathid].reffect[0] = RESPAWN_TIME;
 						}
 					}
 				}

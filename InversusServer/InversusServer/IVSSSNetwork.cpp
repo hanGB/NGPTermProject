@@ -35,6 +35,7 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 
 void Waiting()
 {
+	int pready_count = 0;
 	for (int id = 0; id < MAX_PLAYER; ++id)
 	{
 		if (clnt_data[id].ci != NON_PLAYER)
@@ -45,8 +46,16 @@ void Waiting()
 				{
 					parray[id].gameready = true;
 				}
+
+				if (parray[id].gameready)
+					pready_count++;
 			}
 		}
+	}
+	if (pready_count == clientCount)
+	{
+		if (clientCount > 1)
+			g_GameObjects.GameState = 1;
 	}
 }
 
@@ -122,6 +131,16 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	WaitForSingleObject(hMutex, INFINITE);
 	parray[ci].enable = false;
+	parray[ci].gameready = false;
+
+	g_GameObjects.players[ci] = parray[ci];
+	/*
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		player temp = parray[i];
+		g_GameObjects.players[i] = temp;
+	}
+	*/
+
 	for (int i = 0; i < MAX_PLAYER; i++)
 	{
 		if (connect_index[i] == true)
