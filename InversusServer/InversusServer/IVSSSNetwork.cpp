@@ -3,6 +3,7 @@
 #include "IVSSSUpdate.h"
 #include "IVSSSNetwork.h"
 #include <ctime>
+#include <iostream>
 
 extern int clientCount;
 extern SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
@@ -134,6 +135,11 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	parray[ci].gameready = false;
 
 	g_GameObjects.players[ci] = parray[ci];
+
+	char logstr[100];
+	sprintf(logstr, "[퇴장]Player%d님이 접속을 종료했습니다.\n", ci);
+	log_msg(logstr);
+
 	/*
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		player temp = parray[i];

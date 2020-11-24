@@ -100,6 +100,10 @@ DWORD WINAPI ServerMain(LPVOID arg)
 	bind(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	listen(sock, SOMAXCONN);
 
+	char logstr[100];
+	sprintf(logstr, "[Open]서버를 열었습니다.\n", inet_ntoa(serveraddr.sin_addr), ntohs(serveraddr.sin_port));
+	log_msg(logstr);
+
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
@@ -206,12 +210,13 @@ DWORD WINAPI ServerMain(LPVOID arg)
 				break;
 			}
 		}
-
 		//send(client_sock, (char*)&clnt_info[clientCount - 1], sizeof(Clinfo), 0);
 		send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
 
 		ReleaseMutex(hMutex);//뮤텍스 중지
 
+		sprintf(logstr, "[접속]Player%d님이 접속하셨습니다.(ip: %s port: %d)\n", clinet_index, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+		log_msg(logstr);
 		hTread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
 	}
 	closesocket(sock);

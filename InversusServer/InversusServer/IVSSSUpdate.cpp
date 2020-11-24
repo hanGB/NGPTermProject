@@ -13,6 +13,25 @@ extern RECT rectView;
 extern double sx, sy;
 extern double seta;
 
+void log_msg(char* msg)
+{
+	time_t curTime = time(NULL);
+	struct tm* pLocal;
+	pLocal = localtime(&curTime);
+
+	char timestr[100];
+	sprintf(timestr, "%04d-%02d-%02dT%02d:%02d:%02d",
+		pLocal->tm_year + 1900, pLocal->tm_mon + 1, pLocal->tm_mday,
+		pLocal->tm_hour, pLocal->tm_min, pLocal->tm_sec);
+	printf("[%s] %s\n", timestr, msg);
+
+	FILE* fp;
+
+	fp = fopen("logfile.log", "a");
+	fprintf(fp, "[%s] %s\n", timestr, msg);
+	fclose(fp);
+}
+
 void Update(float elapsedTimeInSec)
 {
 	move_player_object(elapsedTimeInSec);
@@ -236,6 +255,10 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 					parray[i].enable = true;
 					parray[i].reffect[0] = 0;
 
+					char logstr[100];
+					sprintf(logstr, "[Spawn]Player%d¥‘¿Ã ∏ÆΩ∫∆˘«ﬂΩ¿¥œ¥Ÿ.\n", i);
+					log_msg(logstr);
+
 					RECT SpawnBlocks;
 
 					if (i == 0) {
@@ -280,6 +303,9 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 								parray[deathid].respawnTime = RESPAWN_TIME;
 								parray[deathid].reffect[0] = RESPAWN_EFFECT_TIME;
 								DeathEffect(deathid);
+
+								sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘¿ª ∆¯πﬂ∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid);
+								log_msg(logstr);
 
 								if (deathid == 0) {
 									parray[deathid].cx = parray[deathid].reffect[1] = 100;
@@ -462,6 +488,10 @@ void CollisionBetweenBulletAndBlock()
 							parray[deathid].life--;
 							parray[deathid].respawnTime = RESPAWN_TIME;
 							DeathEffect(deathid);
+
+							char logstr[100];
+							sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘¿ª √—¿∏∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid);
+							log_msg(logstr);
 
 							if (deathid == 0) {
 								parray[deathid].cx = parray[deathid].reffect[1] = 100;

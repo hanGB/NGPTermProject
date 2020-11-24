@@ -1,5 +1,8 @@
 #pragma once
 
+//서버 로그파일
+void log_msg(char* msg);
+
 //게임 오브젝트 업데이트 함수
 void Update(float elapsedTimeInSec);
 

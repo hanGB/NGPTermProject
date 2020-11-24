@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-
 // 서버 클라이언트 통신 관련
 #define SERVERPORT 9000
 #define BUFSIZE 10000
