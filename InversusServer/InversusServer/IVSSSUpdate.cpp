@@ -480,7 +480,7 @@ void CollisionBetweenBulletAndBlock()
 								parray[deathid].cy = parray[deathid].reffect[2] = 600;
 							}
 
-							if (parray[deathid].life > 0)
+							if (parray[deathid].life >= 0)
 								parray[deathid].reffect[0] = RESPAWN_TIME;
 						}
 					}
