@@ -3,6 +3,14 @@
 //서버 로그파일
 void log_msg(char* msg);
 
+//보드 초기화 함수
+void initboard();
+
+void initplayerpos(int id);
+
+//플레이어 초기화 함수
+void initplayer(int id);
+
 //게임 오브젝트 업데이트 함수
 void Update(float elapsedTimeInSec);
 

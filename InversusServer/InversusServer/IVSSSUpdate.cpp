@@ -13,6 +13,8 @@ extern RECT rectView;
 extern double sx, sy;
 extern double seta;
 
+extern bool connect_index[4];
+
 void log_msg(char* msg)
 {
 	time_t curTime = time(NULL);
@@ -32,6 +34,80 @@ void log_msg(char* msg)
 	fclose(fp);
 }
 
+void initboard()
+{
+	for (int y = 0; y < BOARD_SIZE; y++)
+	{
+		for (int x = 0; x < BOARD_SIZE; x++)
+		{
+			if (x < BOARD_SIZE / 2 && y < 8)
+			{
+				g_GameObjects.blocks[y][x] = 0;
+			}
+
+			if (x >= BOARD_SIZE / 2 && y < 8)
+			{
+				g_GameObjects.blocks[y][x] = 1;
+			}
+
+			if (x < BOARD_SIZE / 2 && y >= 8)
+			{
+				g_GameObjects.blocks[y][x] = 2;
+			}
+
+			if (x >= BOARD_SIZE / 2 && y >= 8)
+			{
+				g_GameObjects.blocks[y][x] = 3;
+			}
+		}
+	}
+}
+
+void initplayerpos(int id)
+{
+	if (id == 0)
+	{
+		parray[id].cx = 100;
+		parray[id].cy = 200;
+	}
+	else if (id == 1)
+	{
+		parray[id].cx = 900;
+		parray[id].cy = 200;
+	}
+	else if (id == 2)
+	{
+		parray[id].cx = 100;
+		parray[id].cy = 600;
+	}
+	else if (id == 3)
+	{
+		parray[id].cx = 900;
+		parray[id].cy = 600;
+	}
+}
+
+void initplayer(int id)
+{
+	initplayerpos(id);
+
+	if (connect_index[id])
+		parray[id].enable = true;
+	else
+		parray[id].enable = false;
+	parray[id].gameready = false;
+	parray[id].death = false;
+	parray[id].life = MAX_LIFE;
+	parray[id].d_effect[0] = 0;
+	parray[id].reffect[0] = 0;
+	parray[id].coolTime = 0;
+	parray[id].respawnTime = 0;
+
+	for(int i=0; i<6; i++)
+		parray[id].bullet[i][0] = 0;
+
+}
+
 void Update(float elapsedTimeInSec)
 {
 	move_player_object(elapsedTimeInSec);
@@ -47,7 +123,17 @@ void Update(float elapsedTimeInSec)
 		g_GameObjects.timeAfterGameEnd -= elapsedTimeInSec;
 		
 		if (g_GameObjects.timeAfterGameEnd <= 0) {
-			// ∞‘¿” √ ±‚»≠ « ø‰
+			for (int id = 0; id < MAX_PLAYER; id++)
+			{
+				initplayer(id);
+			}
+			initboard();
+
+			g_GameObjects.time = 0;
+			g_GameObjects.gameEnd = false;
+			g_GameObjects.winPlayer = -1;
+			g_GameObjects.timeAfterGameEnd = 6;
+
 			g_GameObjects.GameState = 0;
 		}
 	}
@@ -312,7 +398,7 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 								parray[deathid].reffect[0] = RESPAWN_EFFECT_TIME;
 								DeathEffect(deathid);
 
-								sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘¿ª ∆¯πﬂ∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid);
+								sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª ∆¯πﬂ∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life);
 								log_msg(logstr);
 
 								if (deathid == 0) {
@@ -498,7 +584,7 @@ void CollisionBetweenBulletAndBlock()
 							DeathEffect(deathid);
 
 							char logstr[100];
-							sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘¿ª √—¿∏∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid);
+							sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª √—¿∏∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life);
 							log_msg(logstr);
 
 							if (deathid == 0) {
@@ -675,6 +761,8 @@ void GameEndCheck()
 
 	int maxBlockNum = -1;
 
+	char logstr[100];
+
 	if (!g_GameObjects.gameEnd) {
 		if (g_GameObjects.time > 180) {
 			g_GameObjects.gameEnd = true;
@@ -734,6 +822,9 @@ void GameEndCheck()
 						g_GameObjects.gameEnd = true;
 						g_GameObjects.winPlayer = i;
 						g_GameObjects.timeAfterGameEnd = DLAY_TIME_BACK_TO_LOBBY;
+						sprintf(logstr, "[Win]Player%d¥‘¿Ã Ω¬∏Æ«œºÃΩ¿¥œ¥Ÿ!!(√÷»ƒ 1¿Œ)\n", g_GameObjects.winPlayer);
+						log_msg(logstr);
+						break;
 					}
 				}
 			}

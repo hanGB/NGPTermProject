@@ -38,7 +38,7 @@ double sx, sy;
 double seta = 0;
 
 int g_prevTimeInMillisecond = 0;
-bool connect_index[4] = { false, };
+bool connect_index[MAX_PLAYER] = { false, };
 
 int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdParam, int nCmdShow)
 {
@@ -116,31 +116,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
 		clnt_data[i].ci = NON_PLAYER;
 	}
 
-	for (int y = 0; y < BOARD_SIZE; y++)
-	{
-		for (int x = 0; x < BOARD_SIZE; x++)
-		{
-			if (x < BOARD_SIZE / 2 && y < 8)
-			{
-				g_GameObjects.blocks[y][x] = 0;
-			}
-
-			if (x >= BOARD_SIZE / 2 && y < 8)
-			{
-				g_GameObjects.blocks[y][x] = 1;
-			}
-
-			if (x < BOARD_SIZE / 2 && y >= 8)
-			{
-				g_GameObjects.blocks[y][x] = 2;
-			}
-
-			if (x >= BOARD_SIZE / 2 && y >= 8)
-			{
-				g_GameObjects.blocks[y][x] = 3;
-			}
-		}
-	}
+	initboard();
 
 	while (1)
 	{
@@ -181,26 +157,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
 			if (connect_index[i] == false)
 			{
 				clinet_index = i;
-				if (i == 0)
-				{
-					parray[i].cx = 100;
-					parray[i].cy = 200;
-				}
-				else if (i == 1)
-				{
-					parray[i].cx = 900;
-					parray[i].cy = 200;
-				}
-				else if (i == 2)
-				{
-					parray[i].cx = 100;
-					parray[i].cy = 600;
-				}
-				else if (i == 3)
-				{
-					parray[i].cx = 900;
-					parray[i].cy = 600;
-				}
+				initplayerpos(i);
 				parray[i].enable = true;
 
 				clnt_info[i].ci = i;
