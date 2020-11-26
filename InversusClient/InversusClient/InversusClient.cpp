@@ -305,7 +305,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				if (g_GameObjects.time > 150)
 					SetTextColor(hMemDC, RGB(255, 0, 0));
 
-				wsprintf(str, "TIME: %d√  %d", (int)g_GameObjects.time, ((int)(g_GameObjects.time * 100) % 100));
+				int ms = ((int)(g_GameObjects.time * 1000) % 1000);
+
+				int smallTime = (float)ms / (1000.f / 60.f);
+
+				if (smallTime >= 10)
+					wsprintf(str, "TIME: %d√  %d", (int)g_GameObjects.time, smallTime);
+				else 
+					wsprintf(str, "TIME: %d√  0%d", (int)g_GameObjects.time, smallTime);
 
 				DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
