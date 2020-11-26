@@ -43,6 +43,14 @@ void Update(float elapsedTimeInSec)
 
 	if (!g_GameObjects.gameEnd)
 		g_GameObjects.time += elapsedTimeInSec;
+	else {
+		g_GameObjects.timeAfterGameEnd -= elapsedTimeInSec;
+		
+		if (g_GameObjects.timeAfterGameEnd <= 0) {
+			// 게임 초기화 필요
+			g_GameObjects.GameState = 0;
+		}
+	}
 }
 
 void ColRect(RECT rec, RECT& rec2,int id)//검은벽 움직이지 못하게
@@ -680,6 +688,7 @@ void GameEndCheck()
 				if (parray[i].enable || parray[i].death) {
 					if (parray[i].life == maxLife) {
 						g_GameObjects.winPlayer = i;
+						g_GameObjects.timeAfterGameEnd = DLAY_TIME_BACK_TO_LOBBY;
 						winPlayerNum++;
 					}
 				}
@@ -698,9 +707,11 @@ void GameEndCheck()
 							if (blockNum > maxBlockNum) {
 								maxBlockNum = blockNum;
 								g_GameObjects.winPlayer = i;
+								g_GameObjects.timeAfterGameEnd = DLAY_TIME_BACK_TO_LOBBY;
 							}
 							else if (blockNum == maxBlockNum) {
 								g_GameObjects.winPlayer = DRAW;
+								g_GameObjects.timeAfterGameEnd = DLAY_TIME_BACK_TO_LOBBY;
 							}
 						}
 					}
@@ -722,6 +733,7 @@ void GameEndCheck()
 					if (parray[i].enable) {
 						g_GameObjects.gameEnd = true;
 						g_GameObjects.winPlayer = i;
+						g_GameObjects.timeAfterGameEnd = DLAY_TIME_BACK_TO_LOBBY;
 					}
 				}
 			}

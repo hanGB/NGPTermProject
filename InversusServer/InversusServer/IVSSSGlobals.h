@@ -60,6 +60,7 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 	float time = 0;
 	bool gameEnd = false;
 	int winPlayer = -1;
+	float timeAfterGameEnd = 6;
 }GameObjects;
 
 
@@ -84,3 +85,5 @@ typedef struct GameObjects {//클라이언트로 보낼 데이터
 #define RESPAWN_EFFECT_TIME 2
 
 #define DRAW 100
+ 
+#define DLAY_TIME_BACK_TO_LOBBY 6

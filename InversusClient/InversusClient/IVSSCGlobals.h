@@ -64,6 +64,7 @@ typedef struct GameObjects {//서버에서 받는 데이터
 	float time = 0;
 	bool gameEnd = false;
 	int winPlayer = -1;
+	float timeAfterGameEnd = 6;	
 }GameObjects;
 
 

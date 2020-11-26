@@ -216,6 +216,8 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 	HFONT hFont, OldFont;
 	LOGFONT lf;
 
+	ZeroMemory(&lf, sizeof(lf));
+
 	lf.lfHeight = 50;
 	lf.lfWeight = FW_NORMAL;
 
@@ -225,13 +227,12 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 	OldFont = (HFONT)SelectObject(hMemDC, hFont);
 
 	SetTextColor(hMemDC, RGB(255, 255, 255));
-	RECT aect = { rectView.right * 4 / 16, rectView.bottom * 6 / 16,
-		rectView.right * 12 / 16, rectView.bottom * 10 / 16 };
+	RECT aect = { rectView.left,rectView.bottom * 1 / 4,rectView.right,rectView.bottom * 3 / 4 };
 
 	if (g_GameObjects.gameEnd) {
 		if (g_GameObjects.winPlayer == clnt_data.ci) {
 			SetBkColor(hMemDC, RGB(0, 0, 255));
-			wsprintf(str, "YOU WIN!\n WIN Client ID: %d", g_GameObjects.winPlayer);
+			wsprintf(str, "YOU WIN!\nWIN Client ID: %d", g_GameObjects.winPlayer);
 		}
 		else if (g_GameObjects.winPlayer == DRAW) {
 			SetBkColor(hMemDC, RGB(0, 255, 0));
@@ -239,14 +240,17 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 		}
 		else {
 			SetBkColor(hMemDC, RGB(255, 0, 0));
-			wsprintf(str, "YOU LOSE!\n WIN Client ID: %d", g_GameObjects.winPlayer);
+			wsprintf(str, "YOU LOSE!\nWIN Client ID: %d", g_GameObjects.winPlayer);
 		}
 		DrawText(hMemDC, str, -1, &aect, DT_CENTER);
+
+		SetBkColor(hMemDC, RGB(255, 255, 255));
+		SetTextColor(hMemDC, RGB(0, 0, 0));
+
+
+		wsprintf(str, "\n\n\nAfter %d Seconds to Lobby...", (int)g_GameObjects.timeAfterGameEnd);
+		DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 	}
-
-	SetBkColor(hMemDC, RGB(255, 255, 255));
-	SetTextColor(hMemDC, RGB(0, 0, 0));
-
 	SelectObject(hMemDC, OldFont);
 	DeleteObject(hFont);
 }
