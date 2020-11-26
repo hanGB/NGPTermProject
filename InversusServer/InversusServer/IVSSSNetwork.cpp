@@ -6,16 +6,16 @@
 #include <iostream>
 
 extern int clientCount;
-extern SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
+extern SOCKET clientSocks[MAX_PLAYER];//클라이언트 소켓 보관용 배열
 extern HANDLE hMutex;//뮤텍스
 
 extern GameObjects g_GameObjects;
 extern player parray[MAX_PLAYER];
 
-extern CData clnt_data[MAX_CLNT];
+extern CData clnt_data[MAX_PLAYER];
 
 extern int g_prevTimeInMillisecond;
-extern bool connect_index[4];
+extern bool connect_index[MAX_PLAYER];
 
 int recvn(SOCKET s, char* buf, int len, int flags)
 {
@@ -117,18 +117,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		}
 		ReleaseMutex(hMutex);//뮤텍스 중지
 	}
-
-	/*
-	//이 줄을 실행한다는 것은 해당 클라이언트가 나갔다는 사실임 따라서 해당 클라이언트를 배열에서 제거해줘야함
-	WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
-	for (int i = 0; i < clientCount; i++) {//배열의 갯수만큼
-		if (clientSock == clientSocks[i]) {//만약 현재 clientSock값이 배열의 값과 같다면
-			while (i++ < clientCount - 1)//클라이언트 개수 만큼
-				clientSocks[i] = clientSocks[i + 1];//앞으로 땡긴다.
-			break;
-		}
-	}
-	*/
 
 	WaitForSingleObject(hMutex, INFINITE);
 	parray[ci].enable = false;

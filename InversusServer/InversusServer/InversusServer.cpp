@@ -23,15 +23,15 @@ DWORD WINAPI ProcessClient(LPVOID arg);
 
 SOCKET sock;
 int clientCount = 0;
-SOCKET clientSocks[MAX_CLNT];//클라이언트 소켓 보관용 배열
+SOCKET clientSocks[MAX_PLAYER];//클라이언트 소켓 보관용 배열
 HANDLE hMutex;//뮤텍스
 
 player parray[MAX_PLAYER];
 GameObjects g_GameObjects;
 
 
-Clinfo clnt_info[MAX_CLNT];
-CData clnt_data[MAX_CLNT];
+Clinfo clnt_info[MAX_PLAYER];
+CData clnt_data[MAX_PLAYER];
 
 RECT rectView;
 double sx, sy;
@@ -56,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdPa
 	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	WndClass.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
+	WndClass.lpszMenuName = NULL;
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	//윈도우 클래스 등록
@@ -124,33 +124,6 @@ DWORD WINAPI ServerMain(LPVOID arg)
 		client_sock = accept(sock, (SOCKADDR*)&clientaddr, &addrlen);
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
 
-		/*
-		if (clientCount == 0)
-		{
-			parray[clientCount].cx = 100;
-			parray[clientCount].cy = 200;
-		}
-		else if (clientCount == 1)
-		{
-			parray[clientCount].cx = 900;
-			parray[clientCount].cy = 200;
-		}
-		else if (clientCount == 2)
-		{
-			parray[clientCount].cx = 100;
-			parray[clientCount].cy = 600;
-		}
-		else if (clientCount == 3)
-		{
-			parray[clientCount].cx = 900;
-			parray[clientCount].cy = 600;
-		}
-		parray[clientCount].enable = true;
-
-		clnt_info[clientCount].ci = clientCount;
-		clientSocks[clientCount++] = client_sock;//클라이언트 소켓배열에 방금 가져온 소켓 주소를 전달
-		*/
-
 		int clinet_index = -1;
 		for (int i = 0; i < MAX_PLAYER; i++)
 		{
@@ -167,7 +140,6 @@ DWORD WINAPI ServerMain(LPVOID arg)
 				break;
 			}
 		}
-		//send(client_sock, (char*)&clnt_info[clientCount - 1], sizeof(Clinfo), 0);
 		send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
 
 		ReleaseMutex(hMutex);//뮤텍스 중지
@@ -357,16 +329,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 				}
 
 				Tdetaheffect();
-
-				if (ten < 10)//1초
-				{
-					ten++;
-				}
-				else
-				{
-					ten = 0;
-					gametime++;
-				}
 			}
 			break;
 		case 2:
@@ -390,21 +352,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	case WM_KEYUP:
 
 		InvalidateRect(hWnd, NULL, FALSE);
-		break;
-	case WM_COMMAND:
-		switch (LOWORD(wParam)) {
-		case ID_40001://초급
-			break;
-		case ID_40002://중급
-			break;
-		case ID_40003://고급
-			break;
-		case ID_40004:
-			break;
-
-		case ID_40005:
-			break;
-		}
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);

@@ -6,14 +6,14 @@
 
 extern player parray[MAX_PLAYER];
 
-extern CData clnt_data[MAX_CLNT];
+extern CData clnt_data[MAX_PLAYER];
 extern GameObjects g_GameObjects;
 extern RECT rectView;
 
 extern double sx, sy;
 extern double seta;
 
-extern bool connect_index[4];
+extern bool connect_index[MAX_PLAYER];
 
 void log_msg(char* msg)
 {
@@ -135,36 +135,6 @@ void Update(float elapsedTimeInSec)
 			g_GameObjects.timeAfterGameEnd = 6;
 
 			g_GameObjects.GameState = 0;
-		}
-	}
-}
-
-void ColRect(RECT rec, RECT& rec2,int id)//검은벽 움직이지 못하게
-{
-	RECT temp;
-	if (IntersectRect(&temp, &rec, &rec2))
-	{
-		if ((temp.bottom - temp.top) <= (temp.right - temp.left))
-		{
-			if (temp.top == rec2.top)
-			{
-				parray[id].cy -= temp.bottom - temp.top;
-			}
-			else if (temp.bottom == rec2.bottom)
-			{
-				parray[id].cy += temp.bottom - temp.top;
-			}
-		}
-		else
-		{
-			if (temp.left == rec2.left)
-			{
-				parray[id].cx -= temp.right - temp.left;
-			}
-			else if (temp.right == rec2.right)
-			{
-				parray[id].cx += temp.right - temp.left;
-			}
 		}
 	}
 }
@@ -519,26 +489,6 @@ void move_bullet_object(float elapsedTimeInSec)
 	}
 }
 
-void ReloadBullet(int* reload, double bullet[][4], int time)//총알 장전
-{
-	if (*reload < time)
-	{
-		(*reload)++;
-	}
-	else
-	{
-		for (int i = 0; i < 6; i++)
-		{
-			if (bullet[i][0] == 0)
-			{
-				bullet[i][0] = 1;
-				*reload = 0;
-				return;
-			}
-		}
-	}
-}
-
 void CollisionBetweenBulletAndBlock()
 {
 	for (int id = 0; id < MAX_PLAYER; ++id) {
@@ -647,106 +597,6 @@ void Tdetaheffect()//데스이펙타임
 				}
 			}
 			parray[id].d_effect[0]--;
-		}
-	}
-}
-
-void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
-{
-	for (int i = 0; i < LIMIT_SGUN; i++)
-	{
-		if (sgun[i][0] == 1)
-		{
-			int gx, gy;
-			gx = dx / 3 * cos(seta + i) + sgun[i][1];
-			gy = dy / 3 * sin(seta + i) + sgun[i][2];
-			Ellipse(hMemDC, gx - dx / 10, gy - dx / 10, gx + dx / 10, gy + dx / 10);
-		}
-	}
-}
-
-void Hplayersgun(double sgun[][3], double dx, double dy, double bullet[][4], double cx, double cy, int* score)//플레이어가 특수총알 먹는거
-{
-	RECT cec = { cx - dx / 2, cy - dy / 2, cx + dx / 2, cy + dy / 2 };
-	for (int i = 0; i < LIMIT_SGUN; i++)
-	{
-		if (sgun[i][0] == 1)
-		{
-			RECT sec = { sgun[i][1] - dx / 2 , sgun[i][2] - dy / 2, sgun[i][1] + dx / 2 , sgun[i][2] + dy / 2 };
-			RECT temp;
-			if (IntersectRect(&temp, &sec, &cec))
-			{
-				for (int i = 0; i < 6; i++)
-				{
-					if (bullet[i][0] == 0)
-					{
-						bullet[i][0] = 2;
-						break;
-					}
-
-					if (i == 5)
-					{
-						if (bullet[i][0] == 0)
-						{
-							bullet[i][0] = 2;
-							break;
-						}
-						else
-						{
-							for (int i = 0; i < 6; i++)
-							{
-								if (bullet[i][0] == 1)
-								{
-									bullet[i][0] = 2;
-									break;
-								}
-							}
-						}
-					}
-				}
-				sgun[i][0] = 0;
-				*score += 5;
-			}
-		}
-	}
-}
-
-void Hrotategun(double* rx, double* ry, double cx, double cy, double dx, double dy, double seta, int i, BOOL death, double bullet[][4], HBRUSH oldBrush, HBRUSH hBrush, HBRUSH eBrush, HDC hMemDC)
-{//총알 돌아가는거
-	rx[i] = dx / 3 * cos(seta + i) + cx;
-	ry[i] = dy / 3 * sin(seta + i) + cy;
-}
-
-void RespawnEffect(double reffect[][4], double x, double y, int nu)//리스폰 할때 이펙트 계산
-{
-	reffect[0][0] = 30;
-	reffect[0][1] = x;
-	reffect[0][2] = y;
-	reffect[0][3] = nu;
-}
-
-void Trespawneffect(double reffect[][4], int gametime, BOOL* death, double enemy[][5])//리스폰이펙타임 
-{
-	for (int i = 0; i < LIMIT_ENEMY; i++)
-	{
-		if (reffect[i][0] > 0)
-		{
-			if (gametime >= 60)
-				reffect[i][0] -= 5;
-			else
-				reffect[i][0] -= 3;
-			if (reffect[i][0] == 0)
-			{
-				if (reffect[i][3] == -1)//주인공
-				{
-					*death = false;
-				}
-				else//적
-				{
-					enemy[(int)reffect[i][3]][0] = 1;
-				}
-				reffect[i][0] = -1;
-			}
 		}
 	}
 }
