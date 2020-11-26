@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hinstance, HINSTANCE hPrevInstance, LPSTR IpszCmdPa
 	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	WndClass.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
+	WndClass.lpszMenuName = NULL;
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	//윈도우 클래스 등록
@@ -182,7 +182,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			, &ten, &gametime, level, sgun, &scount, multi);
 		ZeroMemory(&lf, sizeof(lf));
 
-		multireset(parray, rectView, sx, sy);
 		SetTimer(hWnd, 0, 16, NULL);
 		SetTimer(hWnd, 1, 33, NULL);
 
@@ -234,7 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							RECT aect = { parray[i].cx - 45,  parray[i].cy + 30,
 								parray[i].cx + 45, parray[i].cy + 50};
 
-							wsprintf(str, " client id: %d ", i);
+							wsprintf(str, " Player%d ", i);
 							DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
 							SelectObject(hMemDC, OldFont);
@@ -267,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							else if (parray[j].bullet[i][0] == 3)
 							{
 								//총알 쏜거
-								Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, 0);
+								Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, j);
 							}
 						}
 					}

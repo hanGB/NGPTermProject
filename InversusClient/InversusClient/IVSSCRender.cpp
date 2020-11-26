@@ -71,20 +71,6 @@ void Hcreateboad(int block[][20], double dx, double dy, HDC hMemDC)
 	DeleteObject(hPen);
 }
 
-void Hsgun(double sgun[][3], double seta, double dx, double dy, HDC hMemDC)//보드판 위에 특수총알
-{
-	for (int i = 0; i < LIMIT_SGUN; i++)
-	{
-		if (sgun[i][0] == 1)
-		{
-			int gx, gy;
-			gx = dx / 3 * cos(seta + i) + sgun[i][1];
-			gy = dy / 3 * sin(seta + i) + sgun[i][2];
-			Ellipse(hMemDC, gx - dx / 10, gy - dx / 10, gx + dx / 10, gy + dx / 10);
-		}
-	}
-}
-
 void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 {//부활 이펙트
 	HPEN hPen, oldPen;
@@ -117,7 +103,7 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 					DeleteObject(hBrush);
 
 					if (parray[id].nu == clnt_data.ci) {
-						hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+						hBrush = CreateSolidBrush(RGB(255, 0, 0));//검정
 						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 					}
 					else {
@@ -146,7 +132,7 @@ void Hdeatheffect(HDC hMemDC, int* ecolor)//데스이펙트
 	for (int id = 0; id < MAX_PLAYER + 1; id++)
 	{
 		if (id == clnt_data.ci) {
-			hBrush = CreateSolidBrush(RGB(0, 0, 0));//검정
+			hBrush = CreateSolidBrush(RGB(255, 0, 0));
 			oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 		}
 		else {
@@ -190,27 +176,6 @@ void Hscorebord(HDC hMemDC, RECT rectView, double dx, double dy, int life,
 	DeleteObject(hFont);
 }
 
-void Hgamewin(HDC hMemDC, RECT rectView, int check, char* str, HWND hWnd)//일대일 승패 메세지
-{
-	SetBkColor(hMemDC, RGB(255, 255, 255));
-	RECT aect = { rectView.left,rectView.bottom * 1 / 4,rectView.right,rectView.bottom * 3 / 4 };
-	if (check == 0)
-		wsprintf(str, "Player BLACK WIN\nPress Enter key to reset game");
-	else
-		wsprintf(str, "Player WHITE WIN\nPress Enter key to reset game");
-	DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-	KillTimer(hWnd, 1);
-}
-
-void Hgameover(HDC hMemDC, RECT rectView, int score, char* str, HWND hWnd)//게임오버메세지
-{
-	SetBkColor(hMemDC, RGB(255, 255, 255));
-	RECT aect = { rectView.left,rectView.bottom * 1 / 4,rectView.right,rectView.bottom * 3 / 4 };
-	wsprintf(str, "Game Over\n%d\nPress Enter key to reset game", score);
-	DrawText(hMemDC, str, -1, &aect, DT_CENTER);
-	KillTimer(hWnd, 1);
-}
-
 void DrawGameWin(HDC hMemDC, RECT rectView)
 {
 	HFONT hFont, OldFont;
@@ -232,7 +197,7 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 	if (g_GameObjects.gameEnd) {
 		if (g_GameObjects.winPlayer == clnt_data.ci) {
 			SetBkColor(hMemDC, RGB(0, 0, 255));
-			wsprintf(str, "YOU WIN!\nWIN Client ID: %d", g_GameObjects.winPlayer);
+			wsprintf(str, "YOU WIN!\nWIN Player%d", g_GameObjects.winPlayer);
 		}
 		else if (g_GameObjects.winPlayer == DRAW) {
 			SetBkColor(hMemDC, RGB(0, 255, 0));
@@ -240,7 +205,7 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 		}
 		else {
 			SetBkColor(hMemDC, RGB(255, 0, 0));
-			wsprintf(str, "YOU LOSE!\nWIN Client ID: %d", g_GameObjects.winPlayer);
+			wsprintf(str, "YOU LOSE!\nWIN Player%d", g_GameObjects.winPlayer);
 		}
 		DrawText(hMemDC, str, -1, &aect, DT_CENTER);
 
@@ -265,12 +230,12 @@ void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, i
 			regg[i].top = bullet[i][2] - 5;
 			regg[i].right = bullet[i][1] + 50;
 			regg[i].bottom = bullet[i][2] + 5;
-			if (ch == 0)
+			if (ch == clnt_data.ci)
 			{
 				if (bullet[i][3] == 0)
-					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], TRUE);
+					DrawGr(hMemDC, RGB(250, 0, 0), RGB(255, 255, 255), regg[i], TRUE);
 				else
-					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], TRUE);
+					DrawGr(hMemDC, RGB(255, 255, 255), RGB(250, 0, 0), regg[i], TRUE);
 			}
 			else
 			{
@@ -318,12 +283,12 @@ void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, i
 			regg[i].top = bullet[i][2] - 50;
 			regg[i].right = bullet[i][1] + 5;
 			regg[i].bottom = bullet[i][2] + 50;
-			if (ch == 0)
+			if (ch == clnt_data.ci)
 			{
 				if (bullet[i][3] == 2)
-					DrawGr(hMemDC, RGB(0, 0, 0), RGB(250, 250, 250), regg[i], FALSE);
+					DrawGr(hMemDC, RGB(255, 255, 255), RGB(250, 0, 0), regg[i], FALSE);
 				else
-					DrawGr(hMemDC, RGB(250, 250, 250), RGB(0, 0, 0), regg[i], FALSE);
+					DrawGr(hMemDC, RGB(250, 0, 0), RGB(255, 255, 255), regg[i], FALSE);
 			}
 			else
 			{

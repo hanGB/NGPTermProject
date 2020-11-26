@@ -6,6 +6,3 @@ void SetGame(HWND hWnd, RECT* rectView, RECT* tect, double* dx, double* dy,
 	double* seta, int* reload, double effect[][17], double reffect[][4], double enemy[][5], 
 	int* ecount, int* etime, BOOL* death, int* dcount, int* life, int* score, int* combo, 
 	int* ten, int* gametime, int level, double sgun[][3], int* scount, BOOL multi);
-
-//멀티 초기화
-void multireset(player* parray, RECT rectView, double dx, double dy);
