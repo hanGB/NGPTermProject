@@ -111,6 +111,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				if (connect_index[i] == true)
 					send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
 			}
+			ReleaseMutex(hMutex);
 		}
 		else
 		{
