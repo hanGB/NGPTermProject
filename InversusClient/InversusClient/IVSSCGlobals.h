@@ -8,7 +8,7 @@
 #define BUFSIZE 10000
 #define MAX_CLNT 256
 
-#define MAX_PLAYER 5 //최대 플레이어
+#define MAX_PLAYER 4 //최대 플레이어
 
 #define BOARD_SIZE 20 //보드 크기
 
