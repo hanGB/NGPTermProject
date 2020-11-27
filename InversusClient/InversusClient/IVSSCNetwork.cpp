@@ -45,14 +45,18 @@ DWORD WINAPI SendMsg(LPVOID arg) {//전송용 쓰레드함수
 DWORD WINAPI RecvMsg(LPVOID arg) {
 	int len;
 	while (1) {//반복
+		
 		int retval;
 
 		retval = recv(sock, (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
 		if (retval != SOCKET_ERROR) {
 			memcpy(block, g_GameObjects.blocks, sizeof(int) * BOARD_SIZE * BOARD_SIZE);
-			memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
-			clnt_data.coolTime = g_GameObjects.players[clnt_data.ci].coolTime;
+			int id = g_GameObjects.players.nu;
+			parray[id] = g_GameObjects.players;
+
+			//memcpy(parray, g_GameObjects.players, sizeof(player) * MAX_PLAYER);
+			//clnt_data.coolTime = g_GameObjects.players[clnt_data.ci].coolTime;
 		}
 		else
 		{

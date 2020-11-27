@@ -164,7 +164,7 @@ void back_move_player(int id, float elapsedTimeInSec)
 
 void move_player_object(float elapsedTimeInSec)
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) 
+	for (int id = 0; id < MAX_PLAYER; id++) 
 	{
 		if (clnt_data[id].ci != NON_PLAYER) 
 		{
@@ -252,7 +252,7 @@ bullet[i][3] : i번째 방향
 */
 void check_lauched_bullet(float elapsedTimeInSec)
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) 
+	for (int id = 0; id < MAX_PLAYER; id++) 
 	{
 		if (clnt_data[id].ci != NON_PLAYER) 
 		{
@@ -305,7 +305,7 @@ void check_lauched_bullet(float elapsedTimeInSec)
 
 void HandleDeathPlayer(float elapsedTimeInSec)
 {
-	for (int i = 0; i < MAX_PLAYER; ++i) 
+	for (int i = 0; i < MAX_PLAYER; i++) 
 	{
 		if (parray[i].death) 
 		{
@@ -354,7 +354,7 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 						SpawnBlocks = { BLOCK_SIZE * 17, BLOCK_SIZE * 11, BLOCK_SIZE * 19, BLOCK_SIZE * 13 };
 					}
 
-					for (int deathid = 0; deathid < MAX_PLAYER; ++deathid) {
+					for (int deathid = 0; deathid < MAX_PLAYER; deathid++) {
 						if (parray[deathid].enable == true && deathid != i)
 						{
 							RECT rec = { parray[deathid].cx - sx / 2, parray[deathid].cy - sy / 2, parray[deathid].cx + sx / 2, parray[deathid].cy + sy / 2 };
@@ -435,7 +435,7 @@ void Kshotbullet(int id, int d)//id: 플레이어 번호, d: 방향
 
 void move_bullet_object(float elapsedTimeInSec)
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) {
+	for (int id = 0; id < MAX_PLAYER; id++) {
 		for (int i = 0; i < 6; i++)
 		{
 			if (parray[id].bullet[i][0] == 3 || parray[id].bullet[i][0] == 4)
@@ -491,12 +491,12 @@ void move_bullet_object(float elapsedTimeInSec)
 
 void CollisionBetweenBulletAndBlock()
 {
-	for (int id = 0; id < MAX_PLAYER; ++id) {
+	for (int id = 0; id < MAX_PLAYER; id++) {
 		for (int i = 0; i < 6; i++)
 		{
 			if (parray[id].bullet[i][0] == 3) {
-				int bulletX = parray[id].bullet[i][1];
-				int bulletY = parray[id].bullet[i][2];
+				float bulletX = parray[id].bullet[i][1];
+				float bulletY = parray[id].bullet[i][2];
 
 				RECT regg;
 				regg.left = bulletX - 5;
@@ -519,9 +519,9 @@ void CollisionBetweenBulletAndBlock()
 				}
 
 				//총알-플레이어 충돌
-				for (int deathid = 0; deathid < MAX_PLAYER; ++deathid)
+				for (int deathid = 0; deathid < MAX_PLAYER; deathid++)
 				{
-					if (parray[deathid].enable == true && deathid != id)
+					if (parray[deathid].enable == true && deathid != id && !parray[deathid].death)
 					{
 						RECT rec = { parray[deathid].cx - sx/2, parray[deathid].cy - sy / 2, parray[deathid].cx + sx / 2, parray[deathid].cy + sy / 2 };
 						RECT temp;
@@ -616,13 +616,13 @@ void GameEndCheck()
 	if (!g_GameObjects.gameEnd) {
 		if (g_GameObjects.time > 180) {
 			g_GameObjects.gameEnd = true;
-			for (int i = 0; i < MAX_PLAYER; ++i) {
+			for (int i = 0; i < MAX_PLAYER; i++) {
 				if (parray[i].enable || parray[i].death) {
 					if (parray[i].life > maxLife)
 						maxLife = parray[i].life;
 				}
 			}
-			for (int i = 0; i < MAX_PLAYER; ++i) {
+			for (int i = 0; i < MAX_PLAYER; i++) {
 				if (parray[i].enable || parray[i].death) {
 					if (parray[i].life == maxLife) {
 						g_GameObjects.winPlayer = i;
@@ -635,8 +635,8 @@ void GameEndCheck()
 						if (parray[i].life == maxLife) {
 							int blockNum = 0;
 
-							for (int x = 0; x < BOARD_SIZE; ++i) {
-								for (int y = 0; y < BOARD_SIZE; ++i) {
+							for (int x = 0; x < BOARD_SIZE; i++) {
+								for (int y = 0; y < BOARD_SIZE; i++) {
 									if (g_GameObjects.blocks[y][x] == i)
 										blockNum++;
 								}
@@ -658,7 +658,7 @@ void GameEndCheck()
 
 		}
 		else {
-			for (int i = 0; i < MAX_PLAYER; ++i) {
+			for (int i = 0; i < MAX_PLAYER; i++) {
 
 				if (parray[i].enable || parray[i].death) {
 					if (parray[i].life >= 0) {
@@ -667,7 +667,7 @@ void GameEndCheck()
 				}
 			}
 			if (enablePlayerNum == 1) {
-				for (int i = 0; i < MAX_PLAYER; ++i) {
+				for (int i = 0; i < MAX_PLAYER; i++) {
 					if (parray[i].enable) {
 						g_GameObjects.gameEnd = true;
 						g_GameObjects.winPlayer = i;

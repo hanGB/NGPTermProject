@@ -132,7 +132,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
 				clinet_index = i;
 				initplayerpos(i);
 				parray[i].enable = true;
-
+				parray[i].nu = i;
 				clnt_info[i].ci = i;
 				clientSocks[i] = client_sock;
 				connect_index[i] = true;

@@ -38,6 +38,7 @@ typedef struct CData {//클라이언트로부터 받은 데이터
 #define MAX_LIFE 2
 
 typedef struct player {
+	int nu;
 	BOOL enable = false;
 	float rx[7], ry[7];
 	float cx, cy;
@@ -52,7 +53,7 @@ typedef struct player {
 }player;
 
 typedef struct GameObjects {//클라이언트로 보낼 데이터
-	player players[MAX_PLAYER];
+	player players;
 	int blocks[BOARD_SIZE][BOARD_SIZE];
 	int GameState = 1; //0은 로비 1은 게임
 	float time = 0;

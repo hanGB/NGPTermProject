@@ -37,7 +37,7 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 void Waiting()
 {
 	int pready_count = 0;
-	for (int id = 0; id < MAX_PLAYER; ++id)
+	for (int id = 0; id < MAX_PLAYER; id++)
 	{
 		if (clnt_data[id].ci != NON_PLAYER)
 		{
@@ -98,7 +98,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				Waiting();
 
 			player temp = parray[playerid];
-			g_GameObjects.players[playerid] = temp;
+			g_GameObjects.players = temp;
+			g_GameObjects.players.nu = playerid;
 			/*
 			for (int i = 0; i < MAX_PLAYER; ++i) {
 				player temp = parray[playerid];
@@ -126,7 +127,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	parray[ci].enable = false;
 	parray[ci].gameready = false;
 
-	g_GameObjects.players[ci] = parray[ci];
+	g_GameObjects.players = parray[ci];
+	g_GameObjects.players.nu = ci;
 
 	char logstr[100];
 	sprintf(logstr, "[퇴장]Player%d님이 접속을 종료했습니다.\n", ci);
