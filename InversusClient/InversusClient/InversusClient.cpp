@@ -181,7 +181,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 			, effect, reffect, enemy, &ecount, &etime, &death, &dcount, &life, &score, &combo
 			, &ten, &gametime, level, sgun, &scount, multi);
 		ZeroMemory(&lf, sizeof(lf));
-		SetTimer(hWnd, 0, 33, NULL);
+		SetTimer(hWnd, 0, 16, NULL);
+		SetTimer(hWnd, 1, 33, NULL);
 
 		return 0;
 	case WM_PAINT:
@@ -411,10 +412,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	case WM_TIMER: // 시간이 경과하면 메시지 자동 생성
 		switch (wParam) {
 		case 0:
-			// 30fps로 화면 렌더링 및 데이터 전송
+			// 60fps로 화면 렌더링 및 데이터 전송
 			InvalidateRect(hWnd, NULL, FALSE);
 			UpdateWindow(hWnd);
-
+			break;
+		case 1:
 			if (!g_bReadyToSend)
 				g_bReadyToSend = true;	
 			break;
