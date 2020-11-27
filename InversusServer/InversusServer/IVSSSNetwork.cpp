@@ -99,29 +99,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			player temp = parray[playerid];
 			g_GameObjects.players[playerid] = temp;
-			/*
-			for (int i = 0; i < MAX_PLAYER; ++i) {
-				player temp = parray[playerid];
-				temp.nu = playerid;
-
-				g_GameObjects.players[playerid] = temp;
-			}
-			*/
 		}
 		else
 		{
 			ReleaseMutex(hMutex);
 			break;
 		}
-		
 		send(clientSocks[playerid], (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
-		/*for (int i = 0; i < MAX_PLAYER; i++)
-		{
-			if(connect_index[i] == true)
-				send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
-
-		}*/
 		ReleaseMutex(hMutex);//뮤텍스 중지
 	}
 
@@ -134,13 +119,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	char logstr[100];
 	sprintf(logstr, "[퇴장]Player%d님이 접속을 종료했습니다.\n", ci);
 	log_msg(logstr);
-
-	/*
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		player temp = parray[i];
-		g_GameObjects.players[i] = temp;
-	}
-	*/
 
 	for (int i = 0; i < MAX_PLAYER; i++)
 	{
