@@ -6,6 +6,7 @@
 #include <iostream>
 
 extern int clientCount;
+
 extern SOCKET clientSocks[MAX_PLAYER];
 extern HANDLE hMutex;
 
@@ -62,9 +63,11 @@ void Waiting()
 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
-	SOCKET clientSock = (SOCKET)arg; 
+	SOCKET clientSock = (SOCKET)arg;
+
 	int len;
 	int ci = 0;
+
 	for (int i = 0; i < MAX_PLAYER; i++) {
 		if (clientSock == clientSocks[i]) {
 			ci = i;
@@ -77,7 +80,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		char suBuffer[BUFSIZE];
 		int playerid;
 		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer) - 1, 0);
+
 		WaitForSingleObject(hMutex, INFINITE);
+
 		if (GetSize >= 0 && GetSize < BUFSIZE) {
 			suBuffer[GetSize] = '\0';
 			CData* tmp = (CData*)suBuffer;
@@ -100,19 +105,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			player temp = parray[playerid];
 			g_GameObjects.players = temp;
 			g_GameObjects.players.nu = playerid;
+
+			for (int i = 0; i < MAX_PLAYER; i++)
+			{
+				if (connect_index[i] == true)
+					send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
+			}
 		}
 		else
 		{
 			ReleaseMutex(hMutex);
 			break;
 		}
-		for (int i = 0; i < MAX_PLAYER; i++)
-		{
-			if (connect_index[i] == true)
-				send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
-		}
-
-		ReleaseMutex(hMutex);
 	}
 
 	WaitForSingleObject(hMutex, INFINITE);
@@ -123,7 +127,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	g_GameObjects.players.nu = ci;
 
 	char logstr[100];
-	sprintf(logstr, "[종료]Player%d가 접속을 종료했습니다.\n", ci);
+	sprintf(logstr, "[퇴장]Player%d님이 접속을 종료하였습니다.\n", ci);
+
 	log_msg(logstr);
 
 	for (int i = 0; i < MAX_PLAYER; i++)
@@ -137,5 +142,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	clientCount--;
 	ReleaseMutex(hMutex);
 	closesocket(clientSock);
+
 	return 0;
 }
