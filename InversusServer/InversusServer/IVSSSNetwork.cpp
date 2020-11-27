@@ -113,12 +113,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			ReleaseMutex(hMutex);
 			break;
 		}
-		for (int i = 0; i < MAX_PLAYER; i++)
+		
+		send(clientSocks[playerid], (char*)&g_GameObjects, sizeof(GameObjects), 0);
+
+		/*for (int i = 0; i < MAX_PLAYER; i++)
 		{
 			if(connect_index[i] == true)
 				send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
-		}
+		}*/
 		ReleaseMutex(hMutex);//¹ÂÅØ½º ÁßÁö
 	}
 
