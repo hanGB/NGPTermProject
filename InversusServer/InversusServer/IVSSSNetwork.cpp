@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "IVSSSGlobals.h"
 #include "IVSSSUpdate.h"
 #include "IVSSSNetwork.h"
@@ -6,8 +6,8 @@
 #include <iostream>
 
 extern int clientCount;
-extern SOCKET clientSocks[MAX_PLAYER];//Å¬¶óÀÌ¾ðÆ® ¼ÒÄÏ º¸°ü¿ë ¹è¿­
-extern HANDLE hMutex;//¹ÂÅØ½º
+extern SOCKET clientSocks[MAX_PLAYER];//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
+extern HANDLE hMutex;//ï¿½ï¿½ï¿½Ø½ï¿½
 
 extern GameObjects g_GameObjects;
 extern player parray[MAX_PLAYER];
@@ -62,10 +62,10 @@ void Waiting()
 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
-	SOCKET clientSock = (SOCKET)arg; //¸Å°³º¯¼ö·Î¹ÞÀº Å¬¶óÀÌ¾ðÆ® ¼ÒÄÏÀ» Àü´Þ
+	SOCKET clientSock = (SOCKET)arg; //ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¹ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	int len;
-	int ci = 0;//Å¬¶ó ¾ÆÀÌµð
-	for (int i = 0; i < MAX_PLAYER; i++) {//¹è¿­ÀÇ °¹¼ö¸¸Å­
+	int ci = 0;//Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
+	for (int i = 0; i < MAX_PLAYER; i++) {//ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­
 		if (clientSock == clientSocks[i]) {
 			ci = i;
 			break;
@@ -77,7 +77,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		char suBuffer[BUFSIZE];
 		int playerid;
 		GetSize = recv(clientSock, suBuffer, sizeof(suBuffer) - 1, 0);
-		WaitForSingleObject(hMutex, INFINITE);//¹ÂÅØ½º ½ÇÇà
+		WaitForSingleObject(hMutex, INFINITE);//ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (GetSize >= 0 && GetSize < BUFSIZE) {
 			suBuffer[GetSize] = '\0';
 			CData* tmp = (CData*)suBuffer;
@@ -114,13 +114,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			ReleaseMutex(hMutex);
 			break;
 		}
-		for (int i = 0; i < MAX_PLAYER; i++)
-		{
-			if(connect_index[i] == true)
-				send(clientSocks[i], (char*)&g_GameObjects, sizeof(GameObjects), 0);
+		send(clientSocks[playerid], (char*)&g_GameObjects, sizeof(GameObjects), 0);
 
-		}
-		ReleaseMutex(hMutex);//¹ÂÅØ½º ÁßÁö
+		ReleaseMutex(hMutex);//ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
 	WaitForSingleObject(hMutex, INFINITE);
@@ -131,15 +127,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	g_GameObjects.players.nu = ci;
 
 	char logstr[100];
-	sprintf(logstr, "[ÅðÀå]Player%d´ÔÀÌ Á¢¼ÓÀ» Á¾·áÇß½À´Ï´Ù.\n", ci);
+	sprintf(logstr, "[ï¿½ï¿½ï¿½ï¿½]Player%dï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.\n", ci);
 	log_msg(logstr);
-
-	/*
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		player temp = parray[i];
-		g_GameObjects.players[i] = temp;
-	}
-	*/
 
 	for (int i = 0; i < MAX_PLAYER; i++)
 	{
@@ -149,8 +138,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 	connect_index[ci] = false;
 
-	clientCount--;//Å¬¶óÀÌ¾ðÆ® °³¼ö ÇÏ³ª °¨¼Ò
-	ReleaseMutex(hMutex);//¹ÂÅØ½º ÁßÁö
-	closesocket(clientSock);//¼ÒÄÏÀ» Á¾·áÇÑ´Ù.
+	clientCount--;//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ ï¿½ï¿½ï¿½ï¿½
+	ReleaseMutex(hMutex);//ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	closesocket(clientSock);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	return 0;
 }
