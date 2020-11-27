@@ -34,8 +34,8 @@ Clinfo clnt_info[MAX_PLAYER];
 CData clnt_data[MAX_PLAYER];
 
 RECT rectView;
-double sx, sy;
-double seta = 0;
+float sx, sy;
+float seta = 0;
 
 int g_prevTimeInMillisecond = 0;
 bool connect_index[MAX_PLAYER] = { false, };

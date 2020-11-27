@@ -10,8 +10,8 @@ extern CData clnt_data[MAX_PLAYER];
 extern GameObjects g_GameObjects;
 extern RECT rectView;
 
-extern double sx, sy;
-extern double seta;
+extern float sx, sy;
+extern float seta;
 
 extern bool connect_index[MAX_PLAYER];
 
@@ -143,22 +143,22 @@ void back_move_player(int id, float elapsedTimeInSec)
 {
 	if (clnt_data[id].p_key.KEY_W)
 	{
-		parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+		parray[id].cy += float(PLAYER_SPEED) * elapsedTimeInSec;
 	}
 
 	if (clnt_data[id].p_key.KEY_A)
 	{
-		parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+		parray[id].cx += float(PLAYER_SPEED) * elapsedTimeInSec;
 	}
 
 	if (clnt_data[id].p_key.KEY_S)
 	{
-		parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+		parray[id].cy -= float(PLAYER_SPEED) * elapsedTimeInSec;
 	}
 
 	if (clnt_data[id].p_key.KEY_D)
 	{
-		parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+		parray[id].cx -= float(PLAYER_SPEED) * elapsedTimeInSec;
 	}
 }
 
@@ -172,22 +172,22 @@ void move_player_object(float elapsedTimeInSec)
 			{
 				if (clnt_data[id].p_key.KEY_W)
 				{
-					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cy -= float(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
 				if (clnt_data[id].p_key.KEY_A)
 				{
-					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx -= float(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
 				if (clnt_data[id].p_key.KEY_S)
 				{
-					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cy += float(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 
 				if (clnt_data[id].p_key.KEY_D)
 				{
-					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx += float(PLAYER_SPEED) * elapsedTimeInSec;
 				}
 				
 				int player_AA_xidex = int((parray[id].cx + sx / 2) / (rectView.right / BOARD_SIZE));
@@ -224,16 +224,16 @@ void move_player_object(float elapsedTimeInSec)
 				
 
 				if (rectView.top + 100 > parray[id].cy - sy / 2)
-					parray[id].cy += double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cy += float(PLAYER_SPEED) * elapsedTimeInSec;
 
 				if (rectView.bottom < parray[id].cy + sy / 2)
-					parray[id].cy -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cy -= float(PLAYER_SPEED) * elapsedTimeInSec;
 
 				if (rectView.left > parray[id].cx - sx / 2)
-					parray[id].cx += double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx += float(PLAYER_SPEED) * elapsedTimeInSec;
 
 				if (rectView.right < parray[id].cx + sx / 2)
-					parray[id].cx -= double(PLAYER_SPEED) * elapsedTimeInSec;
+					parray[id].cx -= float(PLAYER_SPEED) * elapsedTimeInSec;
 
 				for (int i = 0; i < 6; i++)
 				{
@@ -444,7 +444,7 @@ void move_bullet_object(float elapsedTimeInSec)
 				{
 					if (parray[id].bullet[i][1] - 50 < rectView.right)
 					{
-						parray[id].bullet[i][1] += double(BULLET_SPEED) * elapsedTimeInSec;
+						parray[id].bullet[i][1] += float(BULLET_SPEED) * elapsedTimeInSec;
 					}
 					else
 					{
@@ -455,7 +455,7 @@ void move_bullet_object(float elapsedTimeInSec)
 				{
 					if (parray[id].bullet[i][1] + 50 > rectView.left)
 					{
-						parray[id].bullet[i][1] -= double(BULLET_SPEED) * elapsedTimeInSec;
+						parray[id].bullet[i][1] -= float(BULLET_SPEED) * elapsedTimeInSec;
 					}
 					else
 					{
@@ -466,7 +466,7 @@ void move_bullet_object(float elapsedTimeInSec)
 				{
 					if (parray[id].bullet[i][2] - 50 > rectView.top)
 					{
-						parray[id].bullet[i][2] -= double(BULLET_SPEED) * elapsedTimeInSec;
+						parray[id].bullet[i][2] -= float(BULLET_SPEED) * elapsedTimeInSec;
 					}
 					else
 					{
@@ -477,7 +477,7 @@ void move_bullet_object(float elapsedTimeInSec)
 				{
 					if (parray[id].bullet[i][2] + 50 < rectView.bottom)
 					{
-						parray[id].bullet[i][2] += double(BULLET_SPEED) * elapsedTimeInSec;
+						parray[id].bullet[i][2] += float(BULLET_SPEED) * elapsedTimeInSec;
 					}
 					else
 					{

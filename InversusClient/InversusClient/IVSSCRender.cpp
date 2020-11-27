@@ -39,7 +39,7 @@ void DrawGr(HDC pDC, COLORREF start, COLORREF finish, RECT prect, BOOL direct)//
 		GradientFill(pDC, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
 }
 
-void Hcreateboad(int block[][20], double dx, double dy, HDC hMemDC)
+void Hcreateboad(int block[][20], float dx, float dy, HDC hMemDC)
 {//보드판
 	HBRUSH hBrush, oldBrush;
 	HPEN hPen, oldPen;
@@ -71,7 +71,7 @@ void Hcreateboad(int block[][20], double dx, double dy, HDC hMemDC)
 	DeleteObject(hPen);
 }
 
-void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
+void Hrespwan(HDC hMemDC, int* ecolor, float dx, float dy)
 {//부활 이펙트
 	HPEN hPen, oldPen;
 	HBRUSH hBrush, oldBrush;
@@ -83,7 +83,7 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 				//부활 이펙트
 				if (parray[id].reffect[0] > 0)
 				{
-					if (parray[id].nu == clnt_data.ci) {
+					if (id == clnt_data.ci) {
 						hPen = CreatePen(PS_SOLID, 0, RGB(0, 0, 0));//주인공
 						oldPen = (HPEN)SelectObject(hMemDC, hPen);
 					}
@@ -102,7 +102,7 @@ void Hrespwan(HDC hMemDC, int* ecolor, double dx, double dy)
 					SelectObject(hMemDC, oldBrush);
 					DeleteObject(hBrush);
 
-					if (parray[id].nu == clnt_data.ci) {
+					if (id == clnt_data.ci) {
 						hBrush = CreateSolidBrush(RGB(255, 0, 0));//검정
 						oldBrush = (HBRUSH)SelectObject(hMemDC, hBrush);
 					}
@@ -151,7 +151,7 @@ void Hdeatheffect(HDC hMemDC, int* ecolor)//데스이펙트
 	}
 }
 
-void Hscorebord(HDC hMemDC, RECT rectView, double dx, double dy, int life, 
+void Hscorebord(HDC hMemDC, RECT rectView, float dx, float dy, int life, 
 	char* str, int score, int combo, RECT tect, LOGFONT* lf, BOOL multi)
 {//상단 스코어보드판
 	HBRUSH hBrush, oldBrush;
@@ -220,8 +220,9 @@ void DrawGameWin(HDC hMemDC, RECT rectView)
 	DeleteObject(hFont);
 }
 
-void Hshotbullet(double bullet[][4], RECT* regg, HDC hMemDC, int i, int check, int* ecolor, int ch)
+void Hshotbullet(float bullet[][4], HDC hMemDC, int i, int check, int* ecolor, int ch)
 {//총알 나가는거 생성
+	RECT regg[6];
 	if (bullet[i][3] == 0 || bullet[i][3] == 1)
 	{
 		if (check == 0)

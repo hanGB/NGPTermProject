@@ -141,18 +141,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static RECT rectView;
 	static RECT tect;
 	static LOGFONT lf;
-	static double sx, sy; //사각형 크기
-	static double rx[7], ry[7];//총알 회전위치
-	static double cx = 400, cy = 300;//주인공 첫 위치
-	static double bullet[6][4] = { 0 };//총알
-	static double seta = 0;//총알 돌리기 위한 세타
+	static float sx, sy; //사각형 크기
+	static float rx[7], ry[7];//총알 회전위치
+	static float cx = 400, cy = 300;//주인공 첫 위치
+	static float bullet[6][4] = { 0 };//총알
+	static float seta = 0;//총알 돌리기 위한 세타
 	static int reload = 0;//총알 장전
 
 
-	static double effect[LIMIT_ENEMY + 1][17];//사망 이펙트
-	static double reffect[LIMIT_ENEMY][4] = { 0 };//리스폰 이펙트
+	static float effect[LIMIT_ENEMY + 1][17];//사망 이펙트
+	static float reffect[LIMIT_ENEMY][4] = { 0 };//리스폰 이펙트
 
-	static double enemy[LIMIT_ENEMY][5] = { 0 };//적
+	static float enemy[LIMIT_ENEMY][5] = { 0 };//적
 	static int ecolor[3];//적 색깔
 	static int ecount = 0; //적 카운트
 	static int etime = 30; // 적 생성시간
@@ -160,7 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 	static int dcount = 0;//부활 카운트
 	static int life = 3;
 
-	static double sgun[LIMIT_SGUN][3] = { 0 };//특수총알
+	static float sgun[LIMIT_SGUN][3] = { 0 };//특수총알
 	static int scount = 0;
 
 	static int score = 0;
@@ -266,7 +266,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM IParam)
 							else if (parray[j].bullet[i][0] == 3)
 							{
 								//총알 쏜거
-								Hshotbullet(parray[j].bullet, parray[j].regg, hMemDC, i, 0, ecolor, j);
+								Hshotbullet(parray[j].bullet, hMemDC, i, 0, ecolor, j);
 							}
 						}
 					}
