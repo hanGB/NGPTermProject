@@ -121,8 +121,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 
 	WaitForSingleObject(hMutex, INFINITE);
+	initplayer(ci);
 	parray[ci].enable = false;
-	parray[ci].gameready = false;
 
 	g_GameObjects.players = parray[ci];
 	g_GameObjects.players.nu = ci;

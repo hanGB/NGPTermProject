@@ -30,7 +30,6 @@ typedef struct KeyInputs
 
 typedef struct CData {//클라이언트로부터 받은 데이터
 	int ci;
-	int dx, dy; //방향
 	KeyInputs p_key;
 	float coolTime = 0; //총알 연속 발사 쿨타임
 }CData;

@@ -368,7 +368,7 @@ void HandleDeathPlayer(float elapsedTimeInSec)
 								parray[deathid].reffect[0] = RESPAWN_EFFECT_TIME;
 								DeathEffect(deathid);
 
-								sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª ∆¯πﬂ∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life);
+								sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª ∆¯πﬂ∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life + 1);
 								log_msg(logstr);
 
 								if (deathid == 0) {
@@ -534,7 +534,7 @@ void CollisionBetweenBulletAndBlock()
 							DeathEffect(deathid);
 
 							char logstr[100];
-							sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª √—¿∏∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life);
+							sprintf(logstr, "[Kill]Player%d¥‘¿Ã Player%d¥‘(life: %d)¿ª √—¿∏∑Œ ªÏ«ÿ«ﬂΩ¿¥œ¥Ÿ.\n", i, deathid, parray[deathid].life + 1);
 							log_msg(logstr);
 
 							if (deathid == 0) {

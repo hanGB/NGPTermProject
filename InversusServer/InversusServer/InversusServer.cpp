@@ -125,28 +125,54 @@ DWORD WINAPI ServerMain(LPVOID arg)
 		WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
 
 		int clinet_index = -1;
-		for (int i = 0; i < MAX_PLAYER; i++)
+
+		if (g_GameObjects.GameState == 0)
 		{
-			if (connect_index[i] == false)
+			if (clientCount < MAX_PLAYER)
 			{
-				clinet_index = i;
-				initplayerpos(i);
-				parray[i].enable = true;
-				parray[i].nu = i;
-				clnt_info[i].ci = i;
-				clientSocks[i] = client_sock;
-				connect_index[i] = true;
-				clientCount++;
-				break;
+				for (int i = 0; i < MAX_PLAYER; i++)
+				{
+					if (connect_index[i] == false)
+					{
+						clinet_index = i;
+						initplayerpos(i);
+						parray[i].enable = true;
+						parray[i].nu = i;
+						clnt_info[i].ci = i;
+						clientSocks[i] = client_sock;
+						connect_index[i] = true;
+						clientCount++;
+						break;
+					}
+				}
+				send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
+				ReleaseMutex(hMutex);//뮤텍스 중지
+
+				sprintf(logstr, "[접속]Player%d님이 접속하셨습니다.(ip: %s port: %d)\n", clinet_index, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+				log_msg(logstr);
+				hTread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
+			}
+			else//꽉찼다면
+			{
+				sprintf(logstr, "[접속거부]Player%d님이 접속 거부당하셨습니다.(ip: %s port: %d, 사유: 풀방)\n", clinet_index, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+				log_msg(logstr);
+				Clinfo max;
+				max.ci = MAX_PLAYER;
+				send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
+				ReleaseMutex(hMutex);//뮤텍스 중지
+				closesocket(client_sock);
 			}
 		}
-		send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
-
-		ReleaseMutex(hMutex);//뮤텍스 중지
-
-		sprintf(logstr, "[접속]Player%d님이 접속하셨습니다.(ip: %s port: %d)\n", clinet_index, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-		log_msg(logstr);
-		hTread = CreateThread(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
+		else
+		{
+			sprintf(logstr, "[접속거부]Player%d님이 접속 거부당하셨습니다.(ip: %s port: %d, 사유: 게임플레이중)\n", clinet_index, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+			log_msg(logstr);
+			Clinfo max;
+			max.ci = MAX_PLAYER;
+			send(client_sock, (char*)&clnt_info[clinet_index], sizeof(Clinfo), 0);
+			ReleaseMutex(hMutex);//뮤텍스 중지
+			closesocket(client_sock);
+		}
 	}
 	closesocket(sock);
 	WSACleanup();

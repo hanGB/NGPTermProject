@@ -123,7 +123,12 @@ DWORD WINAPI ClientMain(LPVOID arg)
 	clnt_info = *(Clinfo*)suBuffer;
 	clnt_data.ci = clnt_info.ci;
 
-	clnt_data.dx = 0, clnt_data.dy = 0;
+	if (clnt_data.ci == MAX_PLAYER)//²Ë Ã¡´Ù¸é
+	{
+		closesocket(sock);
+		WSACleanup();
+		return 0;
+	}
 
 	sendThread = CreateThread(NULL, 0, SendMsg, NULL, 0, NULL);
 	recvThread = CreateThread(NULL, 0, RecvMsg, NULL, 0, NULL);
